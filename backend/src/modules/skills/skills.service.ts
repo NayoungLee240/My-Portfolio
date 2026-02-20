@@ -3,38 +3,63 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class SkillsService {
   getSkills() {
-    // 기술 스택을 카테고리별로 분류
+    // 기술 스택을 카테고리별로 분류 (메인 기술: primary, 보조: secondary, 경험: gray)
     return [
       {
-        category: '언어',
+        category: 'LANGUAGES',
         items: [
-          { name: 'JavaScript', level: 'expert' },
-          { name: 'TypeScript', level: 'advanced' },
-          { name: 'SQL', level: 'advanced' },
+          { name: 'JavaScript', type: 'primary' },
+          { name: 'JAVA', type: 'gray' },
+          { name: 'C#', type: 'gray' },
         ],
       },
       {
-        category: '백엔드',
+        category: 'RUNTIME / FRAMEWORK',
         items: [
-          { name: 'Node.js', level: 'expert' },
-          { name: 'NestJS', level: 'intermediate' },
-          { name: 'Express.js', level: 'expert' },
+          { name: 'Node.js', type: 'primary' },
+          { name: 'ASP.NET', type: 'gray' },
+          { name: 'Spring', type: 'gray' },
+          { name: 'Nginx', type: 'gray' },
         ],
       },
       {
-        category: '데이터베이스',
+        category: 'DATABASE',
         items: [
-          { name: 'MySQL', level: 'advanced' },
-          { name: 'Redis', level: 'intermediate' },
-          { name: 'MongoDB', level: 'intermediate' },
+          { name: 'MySQL', type: 'primary' },
+          { name: 'MongoDB', type: 'primary' },
+          { name: 'MSSQL', type: 'gray' },
+          { name: 'PostgreSQL', type: 'gray' },
+          { name: 'Redis', type: 'purple' },
+          { name: 'InfluxDB', type: 'green' },
         ],
       },
       {
-        category: '인프라/도구',
+        category: 'CLOUD / INFRA',
         items: [
-          { name: 'Docker', level: 'intermediate' },
-          { name: 'AWS', level: 'intermediate' },
-          { name: 'Git', level: 'advanced' },
+          { name: 'AWS EC2', type: 'primary' },
+          { name: 'RDS', type: 'primary' },
+          { name: 'ElastiCache', type: 'primary' },
+          { name: 'Load Balancer', type: 'primary' },
+          { name: 'Docker', type: 'gray' },
+          { name: 'Linux', type: 'gray' },
+        ],
+      },
+      {
+        category: 'AUTHENTICATION',
+        items: [
+          { name: 'JWT', type: 'primary' },
+          { name: 'Firebase Auth', type: 'primary' },
+          { name: 'Steam OAuth', type: 'primary' },
+          { name: 'Session Mgmt', type: 'gray' },
+        ],
+      },
+      {
+        category: 'TOOLS & ETC',
+        items: [
+          { name: 'Git', type: 'primary' },
+          { name: 'Elasticsearch', type: 'green' },
+          { name: 'Slack Bot', type: 'gray' },
+          { name: 'GoogleChat Bot', type: 'gray' },
         ],
       },
     ];

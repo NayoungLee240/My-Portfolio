@@ -13,12 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // suppressHydrationWarning: 인라인 스크립트로 data-theme을 덮어쓰기 때문에 hydration 경고 억제
     <html lang="ko" data-theme="dark" suppressHydrationWarning>
       <head>
-        {/* Google Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Bebas+Neue&display=swap"
-          rel="stylesheet"
-        />
+        {/* NanumBarunGothic는 globals.css의 @font-face에서 네이버 CDN으로 로드 */}
         {/* 페이지 로드 즉시 로컬스토리지의 테마 적용 (FOUC 방지) */}
         <script
           dangerouslySetInnerHTML={{

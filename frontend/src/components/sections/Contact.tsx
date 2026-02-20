@@ -1,90 +1,101 @@
-'use client';
-
-import { useState } from 'react';
-import { api } from '@/lib/api';
-import styles from './Contact.module.css';
-
-// 문의 폼 - 클라이언트 컴포넌트 (useState, 이벤트 핸들러 사용)
+// 연락처 섹션 - 링크 목록 + 자격증/학력
 export default function Contact() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('loading');
-    try {
-      await api.contact.send(form);
-      setStatus('success');
-      setForm({ name: '', email: '', message: '' });
-    } catch {
-      setStatus('error');
-    }
-  };
-
   return (
-    <section id="contact" className="section">
-      <div className="container">
-        <h2 className="section-title">Contact</h2>
-        <div className={styles.wrapper}>
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <div className={styles.field}>
-              <label htmlFor="name">이름</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                value={form.name}
-                onChange={handleChange}
-                placeholder="홍길동"
-              />
-            </div>
-            <div className={styles.field}>
-              <label htmlFor="email">이메일</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={form.email}
-                onChange={handleChange}
-                placeholder="example@email.com"
-              />
-            </div>
-            <div className={styles.field}>
-              <label htmlFor="message">메시지</label>
-              <textarea
-                id="message"
-                name="message"
-                required
-                rows={5}
-                value={form.message}
-                onChange={handleChange}
-                placeholder="문의 내용을 입력해주세요."
-              />
-            </div>
-
-            {status === 'success' && (
-              <p className={styles.successMsg}>메시지가 전송되었습니다!</p>
-            )}
-            {status === 'error' && (
-              <p className={styles.errorMsg}>전송에 실패했습니다. 다시 시도해주세요.</p>
-            )}
-
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={status === 'loading'}
+    <section id="contact">
+      <div className="section-wrap">
+        <div className="sec-header fi">
+          <div className="sec-num">// 08</div>
+          <div className="sec-title">CONTACT</div>
+          <div className="sec-line" />
+        </div>
+        <div className="contact-grid">
+          {/* 연락처 링크 */}
+          <div className="c-links fi">
+            <a href="mailto:iny003@naver.com" className="c-link">
+              <div className="c-icon">✉</div>
+              <div className="c-info">
+                <div className="c-label">EMAIL</div>
+                <div className="c-val">iny003@naver.com</div>
+              </div>
+            </a>
+            <a
+              href="https://nayoung-lee.notion.site/fcbd5946265d4b9082c1021dd7701ba0"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="c-link"
             >
-              {status === 'loading' ? '전송 중...' : '전송하기'}
-            </button>
-          </form>
+              <div className="c-icon">📋</div>
+              <div className="c-info">
+                <div className="c-label">NOTION PORTFOLIO</div>
+                <div className="c-val">nayoung-lee.notion.site</div>
+              </div>
+            </a>
+            <a
+              href="https://lyeo-code.tistory.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="c-link"
+            >
+              <div className="c-icon">📝</div>
+              <div className="c-info">
+                <div className="c-label">DEV BLOG</div>
+                <div className="c-val">lyeo-code.tistory.com</div>
+              </div>
+            </a>
+            <a
+              href="https://zerowakegates.com/ko/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="c-link"
+            >
+              <div className="c-icon">🎮</div>
+              <div className="c-info">
+                <div className="c-label">GAME — ZEROWAKE GATES</div>
+                <div className="c-val">zerowakegates.com</div>
+              </div>
+            </a>
+          </div>
+
+          {/* 자격증 & 학력 */}
+          <div className="fi">
+            <div className="cert-lbl">CERTIFICATIONS &amp; EDUCATION</div>
+            <div className="cert-list">
+              <div className="cert-item">
+                <div className="cert-badge">SQLD</div>
+                <div className="cert-info">
+                  <div className="cert-name">SQL 개발자 자격증</div>
+                  <div className="cert-org">한국데이터진흥원 · 2021.04</div>
+                </div>
+              </div>
+              <div className="cert-item">
+                <div className="cert-badge">PCSQL</div>
+                <div className="cert-info">
+                  <div className="cert-name">PCSQL 인증시험</div>
+                  <div className="cert-org">프로그래머스 · 2024.05</div>
+                </div>
+              </div>
+              <div className="cert-item">
+                <div className="cert-badge">KMU</div>
+                <div className="cert-info">
+                  <div className="cert-name">국민대학교 대학원 석사</div>
+                  <div className="cert-org">
+                    융합디자인테크놀로지학과 · GPA 4.45/4.5 · 2017~2019
+                  </div>
+                </div>
+              </div>
+              <div className="cert-item">
+                <div className="cert-badge">🏆</div>
+                <div className="cert-info">
+                  <div className="cert-name">
+                    최우수논문발표상 (한국발명진흥회장상)
+                  </div>
+                  <div className="cert-org">
+                    한국지식재산교육연구학회 · 2019.04
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

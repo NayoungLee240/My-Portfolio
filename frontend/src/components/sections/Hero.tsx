@@ -1,35 +1,63 @@
-// 히어로 섹션 - 이름/직책/스탯 + 우측 터미널 위젯
-export default function Hero() {
+// 히어로 섹션 - 백엔드 about 데이터를 prop으로 받아 렌더링
+export type AboutData = {
+  nameEn: string;
+  subtitle: string;
+  summary: string;
+  email: string;
+  blog: string;
+  notion: string;
+  stats: {
+    totalExp: string;
+    maxCCU: string;
+    stableCCU: string;
+    liveGames: string;
+  };
+};
+
+// "4.9" → ["4.9", ""], "20만" → ["20", "만"], "4+" → ["4", "+"]
+function splitStat(val: string): [string, string] {
+  const m = val.match(/^([\d.]+)(.*)$/);
+  return m ? [m[1], m[2]] : [val, ''];
+}
+
+export default function Hero({ about }: { about: AboutData }) {
+  // "NAYOUNG LEE" → 앞 2글자 일반 + 나머지 accent, 성은 줄바꿈
+  const [firstName, ...rest] = about.nameEn.split(' ');
+  const lastName = rest.join(' ');
+  const nameA = firstName.slice(0, 2);   // "NA"
+  const nameB = firstName.slice(2);      // "YOUNG"
+
+  const [expNum] = splitStat(about.stats.totalExp);
+  const [ccuMaxNum, ccuMaxUnit] = splitStat(about.stats.maxCCU);
+  const [ccuStableNum, ccuStableUnit] = splitStat(about.stats.stableCCU);
+  const [gamesNum, gamesUnit] = splitStat(about.stats.liveGames);
+
   return (
     <section id="hero">
       <div className="hero-glow" />
       <div className="hero-content">
         <div className="hero-tag">BACKEND SERVER DEVELOPER</div>
         <div className="hero-name">
-          NA<span className="ac">YOUNG</span>
-          <br />LEE
+          {nameA}<span className="ac">{nameB}</span>
+          <br />{lastName}
         </div>
-        <div className="hero-title">// GAME BACKEND · NODE.JS · AWS · REDIS</div>
-        <p className="hero-desc">
-          Node.js 기반 글로벌 게임 라이브 서비스를 구축·운영하며<br />
-          인증/접속 대기/콘텐츠 서버를 포함한 백엔드 전반을 담당합니다.<br />
-          상시 6만 / 최대 20만 동접 규모의 서비스를 안정적으로 운영한 경험을 보유합니다.
-        </p>
+        <div className="hero-title">{about.subtitle}</div>
+        <p className="hero-desc">{about.summary}</p>
         <div className="hero-stats">
           <div className="stat">
-            <div className="stat-num">4.9<span className="stat-unit">년</span></div>
+            <div className="stat-num">{expNum}<span className="stat-unit">년</span></div>
             <div className="stat-label">TOTAL EXP</div>
           </div>
           <div className="stat">
-            <div className="stat-num">20<span className="stat-unit">만</span></div>
+            <div className="stat-num">{ccuMaxNum}<span className="stat-unit">{ccuMaxUnit || '만'}</span></div>
             <div className="stat-label">MAX CCU</div>
           </div>
           <div className="stat">
-            <div className="stat-num">6<span className="stat-unit">만</span></div>
+            <div className="stat-num">{ccuStableNum}<span className="stat-unit">{ccuStableUnit || '만'}</span></div>
             <div className="stat-label">STABLE CCU</div>
           </div>
           <div className="stat">
-            <div className="stat-num">4<span className="stat-unit">+</span></div>
+            <div className="stat-num">{gamesNum}<span className="stat-unit">{gamesUnit || '+'}</span></div>
             <div className="stat-label">LIVE GAMES</div>
           </div>
         </div>
@@ -37,11 +65,11 @@ export default function Hero() {
           <a href="#experience" className="btn btn-primary">경력 보기 →</a>
           <a href="https://zerowakegates.com/ko/" target="_blank" rel="noopener noreferrer" className="btn btn-ghost">🎮 ZWG 공식 사이트 ↗</a>
           <a href="/api-docs" className="btn btn-ghost">API 문서 ↗</a>
-          <a href="mailto:iny003@naver.com" className="btn btn-ghost">연락하기</a>
+          <a href={`mailto:${about.email}`} className="btn btn-ghost">연락하기</a>
         </div>
       </div>
 
-      {/* 터미널 위젯 (데스크탑 전용) */}
+      {/* 터미널 위젯 (데스크탑 전용) - 장식용 고정값 */}
       <div className="hero-terminal">
         <div className="term-head">
           <div className="dot dr" /><div className="dot dy" /><div className="dot dg" />
