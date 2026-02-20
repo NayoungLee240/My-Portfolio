@@ -1,0 +1,37 @@
+.hero {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  padding: 5rem 0;
+}
+
+.greeting {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.name {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.summary {
+  max-width: 600px;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+}
