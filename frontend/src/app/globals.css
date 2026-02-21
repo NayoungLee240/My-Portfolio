@@ -190,7 +190,7 @@ button { font-family: inherit; }
 }
 .hero-tag::before { content: ''; display: block; width: 36px; height: 1px; background: var(--accent); }
 .hero-name {
-  font-family: 'NanumBarunGothic', sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(4rem, 10vw, 8.5rem);
   line-height: 0.92;
   letter-spacing: 2px;
@@ -259,7 +259,7 @@ section { position: relative; z-index: 1; }
 .bg-alt { background: var(--bg2); }
 .sec-header { margin-bottom: 3.2rem; }
 .sec-num { font-family: 'NanumBarunGothic', sans-serif; font-size: 0.65rem; color: var(--accent); letter-spacing: 3px; margin-bottom: 0.3rem; }
-.sec-title { font-family: 'NanumBarunGothic', sans-serif; font-size: clamp(2rem, 4vw, 3.2rem); letter-spacing: 2px; color: var(--text); }
+.sec-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 4vw, 3.2rem); letter-spacing: 2px; color: var(--text); }
 .sec-line { width: 48px; height: 2px; background: var(--accent); margin-top: 0.7rem; }
 
 /* ─── 공통 버튼 ─── */
@@ -401,7 +401,7 @@ section { position: relative; z-index: 1; }
 .blog-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 22px var(--shadow); }
 .blog-card-date { font-family: 'NanumBarunGothic', sans-serif; font-size: 0.58rem; color: var(--muted); letter-spacing: 1px; }
 .blog-card-title { font-size: 0.88rem; font-weight: 500; color: var(--text); line-height: 1.5; }
-.blog-card-desc { font-size: 0.77rem; color: var(--text2); line-height: 1.6; flex: 1; }
+.blog-card-desc { font-size: 0.77rem; color: var(--text2); line-height: 1.6; flex: 1; overflow: hidden; word-break: break-word; display: -webkit-box; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical; }
 .blog-card-link { font-family: 'NanumBarunGothic', sans-serif; font-size: 0.58rem; color: var(--accent); letter-spacing: 1px; margin-top: 0.2rem; }
 .blog-loading { display: flex; align-items: center; gap: 1rem; padding: 3rem; color: var(--muted); font-family: 'NanumBarunGothic', sans-serif; font-size: 0.7rem; letter-spacing: 1px; }
 .blog-spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
@@ -482,3 +482,151 @@ section { position: relative; z-index: 1; }
 @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
 @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── 페이드인 딜레이 (Architecture 페이지 등) ─── */
+.fi-d1 { transition-delay: 0.1s; }
+.fi-d2 { transition-delay: 0.2s; }
+.fi-d3 { transition-delay: 0.3s; }
+
+/* ─── ARCHITECTURE PAGE ─── */
+.arch-page-hero {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: 4rem 8vw 3rem;
+}
+[data-theme="dark"] .arch-page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 60% 50%, rgba(0,229,255,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+.arch-page-eyebrow {
+  font-size: 0.65rem;
+  color: var(--accent);
+  letter-spacing: 4px;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.arch-page-eyebrow::before { content: ''; display: block; width: 40px; height: 1px; background: var(--accent); }
+.arch-page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 0.9;
+  letter-spacing: 2px;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+}
+.arch-page-title span { color: var(--accent); }
+.arch-page-desc { font-size: 0.95rem; color: var(--text2); line-height: 1.85; max-width: 640px; margin-bottom: 2.5rem; }
+.arch-kpis { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+.kpi { display: flex; flex-direction: column; gap: 0.3rem; }
+.kpi-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; line-height: 1; color: var(--accent); }
+.kpi-label { font-size: 0.6rem; color: var(--muted); letter-spacing: 2px; }
+.sec-sub { font-size: 0.88rem; color: var(--text2); line-height: 1.8; max-width: 680px; margin-bottom: 3rem; }
+
+/* 아키텍처 다이어그램 */
+.arch-diagram-wrap { background: var(--card); border: 1px solid var(--border); overflow: hidden; box-shadow: 0 8px 32px var(--shadow); }
+.arch-diagram-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.8rem 1.2rem; display: flex; align-items: center; gap: 0.6rem; }
+.arch-dot { width: 10px; height: 10px; border-radius: 50%; }
+.ad-r { background: #ff5f57; } .ad-y { background: #febc2e; } .ad-g { background: #28c840; }
+.arch-diagram-title { font-size: 0.62rem; color: var(--muted); margin-left: 0.4rem; }
+.arch-diagram-img { width: 100%; display: block; cursor: zoom-in; }
+.arch-diagram-caption {
+  padding: 1rem 1.5rem;
+  font-size: 0.62rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.arch-diagram-caption::before { content: ''; display: block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); flex-shrink: 0; }
+
+/* 컴포넌트 테이블 */
+.comp-table { width: 100%; border-collapse: collapse; box-shadow: 0 2px 10px var(--shadow); }
+.comp-table th { font-size: 0.62rem; color: var(--accent); letter-spacing: 2px; text-align: left; padding: 1rem 1.3rem; background: var(--surface); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+.comp-table th:last-child { border-right: none; }
+.comp-table td { padding: 1rem 1.3rem; font-size: 0.82rem; color: var(--text2); border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); vertical-align: top; line-height: 1.65; background: var(--card); }
+.comp-table td:last-child { border-right: none; }
+.comp-table tr:last-child td { border-bottom: none; }
+.comp-table tr:hover td { background: var(--surface); }
+.comp-name { font-weight: 600; color: var(--text); font-size: 0.85rem; }
+.comp-badge { display: inline-block; font-size: 0.55rem; padding: 0.15rem 0.5rem; border-radius: 3px; letter-spacing: 1px; margin-top: 0.4rem; margin-right: 0.3rem; }
+.cb-aws { background: rgba(255,153,0,0.12); color: #ff9900; border: 1px solid rgba(255,153,0,0.25); }
+.cb-redis { background: rgba(220,38,38,0.1); color: #ef4444; border: 1px solid rgba(220,38,38,0.25); }
+.cb-mysql { background: rgba(6,182,212,0.1); color: #06b6d4; border: 1px solid rgba(6,182,212,0.25); }
+.cb-node { background: rgba(16,185,129,0.1); color: var(--accent3); border: 1px solid rgba(16,185,129,0.25); }
+
+/* 설계 결정 카드 */
+.decision-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+.decision-card { background: var(--card); border: 1px solid var(--border); padding: 2rem; position: relative; overflow: hidden; transition: all 0.3s; box-shadow: 0 2px 10px var(--shadow); }
+.decision-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.decision-card.c1::before { background: var(--accent); }
+.decision-card.c2::before { background: var(--accent2); }
+.decision-card.c3::before { background: var(--accent3); }
+.decision-card.c4::before { background: #f59e0b; }
+.decision-card.c5::before { background: #ec4899; }
+.decision-card.c6::before { background: #06b6d4; }
+.decision-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px var(--shadow); }
+.decision-num { font-size: 0.6rem; color: var(--muted); letter-spacing: 2px; margin-bottom: 0.8rem; }
+.decision-title { font-size: 0.85rem; color: var(--text); letter-spacing: 1px; margin-bottom: 1.2rem; line-height: 1.4; }
+.decision-problem { margin-bottom: 1.2rem; }
+.dp-label { font-size: 0.56rem; color: var(--muted); letter-spacing: 2px; margin-bottom: 0.5rem; }
+.dp-text { font-size: 0.8rem; color: var(--text2); line-height: 1.7; padding: 0.6rem 0.9rem; border-left: 2px solid rgba(255,100,100,0.25); background: rgba(255,100,100,0.04); }
+[data-theme="light"] .dp-text { background: rgba(239,68,68,0.04); border-left-color: rgba(239,68,68,0.25); }
+.solution-label { font-size: 0.56rem; color: var(--accent3); letter-spacing: 2px; margin-bottom: 0.5rem; }
+.solution-text { font-size: 0.8rem; color: var(--text2); line-height: 1.7; padding: 0.6rem 0.9rem; border-left: 2px solid var(--accent3); background: rgba(16,185,129,0.04); }
+.decision-effect { margin-top: 1.2rem; font-size: 0.62rem; color: var(--accent); background: var(--tag-bg); border: 1px solid var(--tag-bd); padding: 0.5rem 0.85rem; display: flex; align-items: center; gap: 0.6rem; }
+.decision-effect::before { content: '⚡'; font-size: 0.75rem; }
+[data-theme="light"] .decision-effect { background: rgba(2,132,199,0.06); border-color: rgba(2,132,199,0.2); }
+
+/* 플로우 다이어그램 */
+.flow-steps { display: flex; flex-direction: column; gap: 0; }
+.flow-step { display: flex; gap: 2rem; align-items: stretch; }
+.flow-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 48px; }
+.flow-circle { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--accent); font-weight: 700; background: var(--bg); flex-shrink: 0; z-index: 1; }
+.flow-line { flex: 1; width: 2px; background: linear-gradient(to bottom, var(--accent), var(--accent2)); margin: 0 auto; opacity: 0.3; }
+.flow-content { flex: 1; padding: 0 0 2.5rem 0; }
+.flow-title { font-size: 0.78rem; color: var(--text); letter-spacing: 1px; margin-bottom: 0.7rem; padding-top: 0.7rem; }
+.flow-desc { font-size: 0.8rem; color: var(--text2); line-height: 1.75; }
+.flow-detail { margin-top: 0.8rem; background: var(--surface); border: 1px solid var(--border); padding: 0.9rem 1.2rem; font-size: 0.65rem; color: var(--muted); line-height: 2; }
+.flow-detail .hl { color: var(--accent); }
+.flow-detail .hl2 { color: var(--accent3); }
+.flow-detail .hl3 { color: var(--accent2); }
+
+/* 스케일 배너 */
+.scale-banner { background: var(--card); border: 1px solid var(--border); padding: 2.5rem; position: relative; overflow: hidden; box-shadow: 0 4px 20px var(--shadow); }
+.scale-banner::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(to right, var(--accent), var(--accent2), var(--accent3), #f59e0b); }
+.scale-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2rem; text-align: center; }
+.scale-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; line-height: 1; margin-bottom: 0.5rem; }
+.scale-label { font-size: 0.6rem; color: var(--muted); letter-spacing: 1.5px; line-height: 1.7; }
+
+/* 기여 카드 */
+.contrib-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
+.contrib-card { background: var(--card); border: 1px solid var(--border); padding: 1.7rem; box-shadow: 0 2px 8px var(--shadow); transition: all 0.25s; }
+.contrib-card:hover { border-color: var(--accent2); transform: translateY(-3px); box-shadow: 0 10px 26px var(--shadow); }
+.contrib-icon { font-size: 1.6rem; margin-bottom: 1rem; display: block; }
+.contrib-title { font-size: 0.75rem; color: var(--accent2); letter-spacing: 2px; margin-bottom: 0.8rem; }
+.contrib-desc { font-size: 0.8rem; color: var(--text2); line-height: 1.75; }
+.contrib-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+.ctag { font-size: 0.58rem; padding: 0.2rem 0.55rem; background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); color: var(--accent2); letter-spacing: 0.5px; }
+
+/* 라이트박스 (Architecture 페이지) */
+.arch-lb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9000; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; }
+.arch-lb.open { display: flex; }
+.arch-lb img { max-width: 95vw; max-height: 88vh; object-fit: contain; }
+.arch-lb-close { color: #fff; font-size: 2rem; cursor: pointer; opacity: 0.7; transition: opacity 0.2s; user-select: none; background: none; border: none; align-self: flex-end; margin-right: 2.5vw; }
+.arch-lb-close:hover { opacity: 1; }
+.arch-lb-hint { font-size: 0.6rem; color: rgba(255,255,255,0.35); letter-spacing: 2px; }
+
+@media (max-width: 700px) {
+  .arch-page-hero { padding: 3rem 1.5rem 2.5rem; }
+  .arch-kpis { gap: 1.5rem; }
+  .flow-step { gap: 1rem; }
+  .comp-table { font-size: 0.75rem; }
+}

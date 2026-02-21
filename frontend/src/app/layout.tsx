@@ -14,6 +14,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" data-theme="dark" suppressHydrationWarning>
       <head>
         {/* NanumBarunGothic는 globals.css의 @font-face에서 네이버 CDN으로 로드 */}
+        {/* Bebas Neue: 이름/섹션 타이틀 디스플레이 폰트 */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+          rel="stylesheet"
+        />
         {/* 페이지 로드 즉시 로컬스토리지의 테마 적용 (FOUC 방지) */}
         <script
           dangerouslySetInnerHTML={{

@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 // 서버 아키텍처 설계 경험 소개 섹션
 export default function Architecture() {
   const cards = [
@@ -56,6 +58,12 @@ export default function Architecture() {
               <div className="arch-hl">{card.hl}</div>
             </div>
           ))}
+        </div>
+        {/* 상세 아키텍처 페이지 링크 */}
+        <div style={{ marginTop: '2.5rem', display: 'flex', justifyContent: 'center' }}>
+          <Link href="/architecture" className="btn btn-ghost">
+            전체 아키텍처 설계 보기 →
+          </Link>
         </div>
       </div>
     </section>
