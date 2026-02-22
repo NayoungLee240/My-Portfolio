@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import NextConfig from "../../../next.config.mjs";
+
+const basePath = NextConfig.basePath;
 
 // 아키텍처 상세 페이지 - Zerowake Gates 게임 서버 설계 문서
 export default function ArchitecturePage() {
@@ -103,7 +106,7 @@ export default function ArchitecturePage() {
               </span>
             </div>
             <Image
-              src="/server_arch.png"
+              src={basePath + "/server_arch.png"}
               alt="Game Server Architecture Diagram"
               width={1600}
               height={900}

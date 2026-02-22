@@ -1,0 +1,1631 @@
+<!doctype html>
+<html lang="ko" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server Architecture | 이나영 Game Backend</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      [data-theme="dark"] {
+        --bg: #080c10;
+        --bg2: #0d1117;
+        --surface: #141c24;
+        --card: #0f1923;
+        --border: #1e2d3d;
+        --text: #e2e8f0;
+        --text2: #94a3b8;
+        --muted: #64748b;
+        --accent: #00e5ff;
+        --accent2: #7c3aed;
+        --accent3: #10b981;
+        --accent4: #f59e0b;
+        --shadow: rgba(0, 0, 0, 0.5);
+        --nav-bg: rgba(8, 12, 16, 0.9);
+      }
+      [data-theme="light"] {
+        --bg: #f8fafc;
+        --bg2: #f1f5f9;
+        --surface: #fff;
+        --card: #fff;
+        --border: #cbd5e1;
+        --text: #0f172a;
+        --text2: #475569;
+        --muted: #94a3b8;
+        --accent: #0284c7;
+        --accent2: #7c3aed;
+        --accent3: #059669;
+        --accent4: #d97706;
+        --shadow: rgba(0, 0, 0, 0.08);
+        --nav-bg: rgba(248, 250, 252, 0.92);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Noto Sans KR", sans-serif;
+        font-weight: 300;
+        overflow-x: hidden;
+        transition:
+          background 0.35s,
+          color 0.35s;
+      }
+
+      [data-theme="dark"] .grid-bg {
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 229, 255, 0.022) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 229, 255, 0.022) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
+      }
+      [data-theme="light"] .grid-bg {
+        display: none;
+      }
+
+      /* NAV */
+      nav {
+        position: sticky;
+        top: 0;
+        z-index: 200;
+        background: var(--nav-bg);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        padding: 0 2rem;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition:
+          background 0.35s,
+          border-color 0.35s;
+      }
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        color: var(--muted);
+        letter-spacing: 1px;
+        padding: 0.38rem 0.8rem;
+        border: 1px solid var(--border);
+        transition: all 0.2s;
+      }
+      .back-btn:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .nav-title {
+        font-family: "Space Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--text);
+        letter-spacing: 1px;
+      }
+      .nav-title span {
+        color: var(--accent);
+      }
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .tt {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 0.28rem 0.65rem;
+        transition: all 0.2s;
+        user-select: none;
+      }
+      .tt:hover {
+        border-color: var(--accent);
+      }
+      .tt-track {
+        width: 30px;
+        height: 16px;
+        border-radius: 8px;
+        background: var(--border);
+        position: relative;
+        transition: background 0.3s;
+      }
+      [data-theme="light"] .tt-track {
+        background: var(--accent);
+      }
+      .tt-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #fff;
+        transition: transform 0.3s;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+      [data-theme="light"] .tt-thumb {
+        transform: translateX(14px);
+      }
+      .tt-lbl {
+        font-family: "Space Mono", monospace;
+        font-size: 0.56rem;
+        color: var(--muted);
+        letter-spacing: 1px;
+        width: 25px;
+      }
+
+      /* HERO BANNER */
+      .hero-banner {
+        position: relative;
+        overflow: hidden;
+        background: var(--bg2);
+        border-bottom: 1px solid var(--border);
+        padding: 4rem 8vw 3rem;
+      }
+      [data-theme="dark"] .hero-banner::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at 60% 50%,
+          rgba(0, 229, 255, 0.06) 0%,
+          transparent 65%
+        );
+        pointer-events: none;
+      }
+      .hero-eyebrow {
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        color: var(--accent);
+        letter-spacing: 4px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .hero-eyebrow::before {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 1px;
+        background: var(--accent);
+      }
+      .hero-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(3rem, 7vw, 6rem);
+        line-height: 0.9;
+        letter-spacing: 2px;
+        color: var(--text);
+        margin-bottom: 1.5rem;
+      }
+      .hero-title span {
+        color: var(--accent);
+      }
+      .hero-desc {
+        font-size: 0.95rem;
+        color: var(--text2);
+        line-height: 1.85;
+        max-width: 640px;
+        margin-bottom: 2.5rem;
+      }
+      .hero-kpis {
+        display: flex;
+        gap: 2.5rem;
+        flex-wrap: wrap;
+      }
+      .kpi {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
+      .kpi-num {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2.8rem;
+        line-height: 1;
+        color: var(--accent);
+      }
+      .kpi-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        color: var(--muted);
+        letter-spacing: 2px;
+      }
+
+      /* SECTIONS */
+      section {
+        position: relative;
+        z-index: 1;
+      }
+      .section-wrap {
+        padding: 5rem 8vw;
+      }
+      .bg-alt {
+        background: var(--bg2);
+      }
+
+      .sec-num {
+        font-family: "Space Mono", monospace;
+        font-size: 0.62rem;
+        color: var(--accent);
+        letter-spacing: 3px;
+        margin-bottom: 0.4rem;
+      }
+      .sec-title {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+        letter-spacing: 2px;
+        color: var(--text);
+        margin-bottom: 0.7rem;
+      }
+      .sec-line {
+        width: 48px;
+        height: 2px;
+        background: var(--accent);
+        margin-bottom: 2.5rem;
+      }
+      .sec-sub {
+        font-size: 0.88rem;
+        color: var(--text2);
+        line-height: 1.8;
+        max-width: 680px;
+        margin-bottom: 3rem;
+      }
+
+      /* ARCH DIAGRAM */
+      .arch-diagram-wrap {
+        position: relative;
+        background: var(--card);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        box-shadow: 0 8px 32px var(--shadow);
+      }
+      .arch-diagram-header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0.8rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .arch-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .ad-r {
+        background: #ff5f57;
+      }
+      .ad-y {
+        background: #febc2e;
+      }
+      .ad-g {
+        background: #28c840;
+      }
+      .arch-diagram-title {
+        font-family: "Space Mono", monospace;
+        font-size: 0.62rem;
+        color: var(--muted);
+        margin-left: 0.4rem;
+      }
+      .arch-diagram-img {
+        width: 100%;
+        display: block;
+        cursor: zoom-in;
+      }
+      .arch-diagram-caption {
+        padding: 1rem 1.5rem;
+        font-family: "Space Mono", monospace;
+        font-size: 0.62rem;
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+      .arch-diagram-caption::before {
+        content: "";
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent3);
+        flex-shrink: 0;
+      }
+
+      /* DECISION CARDS */
+      .decision-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+      .decision-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+        box-shadow: 0 2px 10px var(--shadow);
+      }
+      .decision-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+      }
+      .decision-card.c1::before {
+        background: var(--accent);
+      }
+      .decision-card.c2::before {
+        background: var(--accent2);
+      }
+      .decision-card.c3::before {
+        background: var(--accent3);
+      }
+      .decision-card.c4::before {
+        background: var(--accent4);
+      }
+      .decision-card.c5::before {
+        background: #ec4899;
+      }
+      .decision-card.c6::before {
+        background: #06b6d4;
+      }
+      .decision-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px var(--shadow);
+      }
+      .decision-num {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        color: var(--muted);
+        letter-spacing: 2px;
+        margin-bottom: 0.8rem;
+      }
+      .decision-title {
+        font-family: "Space Mono", monospace;
+        font-size: 0.85rem;
+        color: var(--text);
+        letter-spacing: 1px;
+        margin-bottom: 1.2rem;
+        line-height: 1.4;
+      }
+      .decision-problem {
+        margin-bottom: 1.2rem;
+      }
+      .dp-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.56rem;
+        color: var(--muted);
+        letter-spacing: 2px;
+        margin-bottom: 0.5rem;
+      }
+      .dp-text {
+        font-size: 0.8rem;
+        color: var(--text2);
+        line-height: 1.7;
+        background: var(--surface);
+        border-left: 2px solid var(--border);
+        padding: 0.6rem 0.9rem;
+      }
+      [data-theme="dark"] .dp-text {
+        background: rgba(255, 100, 100, 0.04);
+        border-left-color: rgba(255, 100, 100, 0.25);
+      }
+      [data-theme="light"] .dp-text {
+        background: rgba(239, 68, 68, 0.04);
+        border-left-color: rgba(239, 68, 68, 0.25);
+      }
+      .solution-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.56rem;
+        color: var(--accent3);
+        letter-spacing: 2px;
+        margin-bottom: 0.5rem;
+      }
+      .solution-text {
+        font-size: 0.8rem;
+        color: var(--text2);
+        line-height: 1.7;
+        background: var(--surface);
+        border-left: 2px solid var(--accent3);
+        padding: 0.6rem 0.9rem;
+      }
+      [data-theme="dark"] .solution-text {
+        background: rgba(16, 185, 129, 0.04);
+      }
+      [data-theme="light"] .solution-text {
+        background: rgba(5, 150, 105, 0.04);
+      }
+      .decision-effect {
+        margin-top: 1.2rem;
+        font-family: "Space Mono", monospace;
+        font-size: 0.62rem;
+        color: var(--accent);
+        background: var(--tag-bg, rgba(0, 229, 255, 0.06));
+        border: 1px solid var(--tag-bd, rgba(0, 229, 255, 0.15));
+        padding: 0.5rem 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      [data-theme="light"] .decision-effect {
+        background: rgba(2, 132, 199, 0.06);
+        border-color: rgba(2, 132, 199, 0.2);
+        color: var(--accent);
+      }
+      .decision-effect::before {
+        content: "⚡";
+        font-size: 0.75rem;
+      }
+
+      /* COMPONENT TABLE */
+      .comp-table {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: 0 2px 10px var(--shadow);
+      }
+      .comp-table th {
+        font-family: "Space Mono", monospace;
+        font-size: 0.62rem;
+        color: var(--accent);
+        letter-spacing: 2px;
+        text-align: left;
+        padding: 1rem 1.3rem;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+      }
+      .comp-table th:last-child {
+        border-right: none;
+      }
+      .comp-table td {
+        padding: 1rem 1.3rem;
+        font-size: 0.82rem;
+        color: var(--text2);
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        vertical-align: top;
+        line-height: 1.65;
+        background: var(--card);
+      }
+      .comp-table td:last-child {
+        border-right: none;
+      }
+      .comp-table tr:last-child td {
+        border-bottom: none;
+      }
+      .comp-table tr:hover td {
+        background: var(--surface);
+      }
+      .comp-name {
+        font-weight: 600;
+        color: var(--text);
+        font-size: 0.85rem;
+      }
+      .comp-badge {
+        display: inline-block;
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 3px;
+        letter-spacing: 1px;
+        margin-top: 0.4rem;
+      }
+      .cb-aws {
+        background: rgba(255, 153, 0, 0.12);
+        color: #ff9900;
+        border: 1px solid rgba(255, 153, 0, 0.25);
+      }
+      .cb-redis {
+        background: rgba(220, 38, 38, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(220, 38, 38, 0.25);
+      }
+      .cb-mysql {
+        background: rgba(6, 182, 212, 0.1);
+        color: #06b6d4;
+        border: 1px solid rgba(6, 182, 212, 0.25);
+      }
+      .cb-node {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--accent3);
+        border: 1px solid rgba(16, 185, 129, 0.25);
+      }
+
+      /* CONTRIBUTION SECTION */
+      .contrib-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.2rem;
+      }
+      .contrib-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 1.7rem;
+        box-shadow: 0 2px 8px var(--shadow);
+        transition: all 0.25s;
+      }
+      .contrib-card:hover {
+        border-color: var(--accent2);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 26px var(--shadow);
+      }
+      .contrib-icon {
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+      .contrib-title {
+        font-family: "Space Mono", monospace;
+        font-size: 0.75rem;
+        color: var(--accent2);
+        letter-spacing: 2px;
+        margin-bottom: 0.8rem;
+      }
+      .contrib-desc {
+        font-size: 0.8rem;
+        color: var(--text2);
+        line-height: 1.75;
+      }
+      .contrib-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 1rem;
+      }
+      .ctag {
+        font-family: "Space Mono", monospace;
+        font-size: 0.58rem;
+        padding: 0.2rem 0.55rem;
+        background: rgba(124, 58, 237, 0.08);
+        border: 1px solid rgba(124, 58, 237, 0.2);
+        color: var(--accent2);
+        letter-spacing: 0.5px;
+      }
+
+      /* FLOW DIAGRAM */
+      .flow-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .flow-step {
+        display: flex;
+        gap: 2rem;
+        align-items: stretch;
+      }
+      .flow-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+        width: 48px;
+      }
+      .flow-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 2px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Space Mono", monospace;
+        font-size: 0.7rem;
+        color: var(--accent);
+        font-weight: 700;
+        background: var(--bg);
+        flex-shrink: 0;
+        z-index: 1;
+      }
+      .flow-line {
+        flex: 1;
+        width: 2px;
+        background: linear-gradient(to bottom, var(--accent), var(--accent2));
+        margin: 0 auto;
+        opacity: 0.3;
+      }
+      .flow-content {
+        flex: 1;
+        padding: 0 0 2.5rem 0;
+      }
+      .flow-title {
+        font-family: "Space Mono", monospace;
+        font-size: 0.78rem;
+        color: var(--text);
+        letter-spacing: 1px;
+        margin-bottom: 0.7rem;
+        padding-top: 0.7rem;
+      }
+      .flow-desc {
+        font-size: 0.8rem;
+        color: var(--text2);
+        line-height: 1.75;
+      }
+      .flow-detail {
+        margin-top: 0.8rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 0.9rem 1.2rem;
+        font-family: "Space Mono", monospace;
+        font-size: 0.65rem;
+        color: var(--muted);
+        line-height: 2;
+      }
+      .flow-detail .hl {
+        color: var(--accent);
+      }
+      .flow-detail .hl2 {
+        color: var(--accent3);
+      }
+      .flow-detail .hl3 {
+        color: var(--accent2);
+      }
+
+      /* SCALE BANNER */
+      .scale-banner {
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 20px var(--shadow);
+      }
+      [data-theme="dark"] .scale-banner::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          to right,
+          var(--accent),
+          var(--accent2),
+          var(--accent3),
+          var(--accent4)
+        );
+      }
+      [data-theme="light"] .scale-banner::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(
+          to right,
+          var(--accent),
+          var(--accent2),
+          var(--accent3),
+          var(--accent4)
+        );
+      }
+      .scale-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 2rem;
+        text-align: center;
+      }
+      .scale-num {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 2.8rem;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+      }
+      .scale-label {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        color: var(--muted);
+        letter-spacing: 1.5px;
+        line-height: 1.7;
+      }
+
+      /* SUGGESTIONS SECTION */
+      .suggest-intro {
+        font-size: 0.9rem;
+        color: var(--text2);
+        line-height: 1.85;
+        margin-bottom: 2.5rem;
+        max-width: 680px;
+      }
+      .suggest-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.2rem;
+      }
+      .suggest-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        padding: 1.6rem;
+        box-shadow: 0 2px 8px var(--shadow);
+        transition: all 0.25s;
+        position: relative;
+      }
+      .suggest-card:hover {
+        border-color: var(--accent4);
+        transform: translateY(-3px);
+      }
+      .suggest-priority {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-family: "Space Mono", monospace;
+        font-size: 0.55rem;
+        letter-spacing: 1px;
+        padding: 0.18rem 0.55rem;
+        border-radius: 3px;
+      }
+      .sp-high {
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #ef4444;
+      }
+      .sp-med {
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        color: var(--accent4);
+      }
+      .sp-low {
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        color: var(--accent3);
+      }
+      .suggest-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.8rem;
+        display: block;
+      }
+      .suggest-title {
+        font-family: "Space Mono", monospace;
+        font-size: 0.73rem;
+        color: var(--text);
+        letter-spacing: 1.5px;
+        margin-bottom: 0.7rem;
+      }
+      .suggest-desc {
+        font-size: 0.78rem;
+        color: var(--text2);
+        line-height: 1.75;
+      }
+      .suggest-example {
+        margin-top: 0.9rem;
+        font-family: "Space Mono", monospace;
+        font-size: 0.62rem;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 0.5rem 0.8rem;
+        line-height: 1.8;
+      }
+      .suggest-example span {
+        color: var(--accent3);
+      }
+
+      /* FOOTER */
+      footer {
+        background: var(--bg2);
+        border-top: 1px solid var(--border);
+        padding: 1.5rem 8vw;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        position: relative;
+        z-index: 1;
+      }
+      .f-left {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        color: var(--muted);
+        letter-spacing: 1px;
+      }
+      .f-right a {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        color: var(--accent);
+        text-decoration: none;
+      }
+      .f-right a:hover {
+        text-decoration: underline;
+      }
+
+      /* LIGHTBOX */
+      .lb {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 9000;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .lb.open {
+        display: flex;
+      }
+      .lb img {
+        max-width: 95vw;
+        max-height: 88vh;
+        object-fit: contain;
+      }
+      .lb-close {
+        color: #fff;
+        font-size: 2rem;
+        cursor: pointer;
+        font-family: "Space Mono", monospace;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        user-select: none;
+      }
+      .lb-close:hover {
+        opacity: 1;
+      }
+      .lb-hint {
+        font-family: "Space Mono", monospace;
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.35);
+        letter-spacing: 2px;
+      }
+
+      /* FADE IN */
+      .fi {
+        opacity: 0;
+        transform: translateY(18px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .fi.v {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .fi-d1 {
+        transition-delay: 0.1s;
+      }
+      .fi-d2 {
+        transition-delay: 0.2s;
+      }
+      .fi-d3 {
+        transition-delay: 0.3s;
+      }
+
+      @media (max-width: 700px) {
+        .section-wrap {
+          padding: 3.5rem 1.5rem;
+        }
+        .hero-banner {
+          padding: 3rem 1.5rem 2.5rem;
+        }
+        .hero-kpis {
+          gap: 1.5rem;
+        }
+        nav {
+          padding: 0 1rem;
+        }
+        .comp-table {
+          font-size: 0.75rem;
+        }
+        .flow-step {
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-bg"></div>
+
+    <!-- NAV -->
+    <nav>
+      <div class="nav-left">
+        <a href="portfolio_nayoung.html" class="back-btn">&larr; 포트폴리오</a>
+        <div class="nav-title">
+          NY_LEE &middot; <span>SERVER ARCHITECTURE</span>
+        </div>
+      </div>
+      <div class="nav-right">
+        <div class="tt" id="themeToggle">
+          <span class="tt-lbl" id="ttLabel">DARK</span>
+          <div class="tt-track"><div class="tt-thumb"></div></div>
+          <span id="ttIcon">&#127769;</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO BANNER -->
+    <div class="hero-banner">
+      <div class="hero-eyebrow">ZEROWAKE GATES &middot; GAME SERVER DESIGN</div>
+      <div class="hero-title">GAME SERVER<br /><span>ARCHITECTURE</span></div>
+      <p class="hero-desc">
+        글로벌 게임 서비스를 위해 <strong>Singapore 리전</strong>에
+        설계&middot;구축한 게임 서버 아키텍처입니다.<br />
+        역할별 서버 분리, Multi-AZ 고가용성, Redis 세션 제어, RDS Proxy 연결
+        풀링까지<br />
+        스케일과 안정성을 동시에 고려한 설계 결정들을 직접 주도했습니다.
+      </p>
+      <div class="hero-kpis">
+        <div class="kpi">
+          <div class="kpi-num">
+            50k~200k<span style="font-size: 1.4rem">+</span>
+          </div>
+          <div class="kpi-label">CCU (CONCURRENT USERS)</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-num">
+            500k~1.6M<span style="font-size: 1.4rem">+</span>
+          </div>
+          <div class="kpi-label">DAU (DAILY ACTIVE USERS)</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-num">SGP</div>
+          <div class="kpi-label">GLOBAL REGION</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-num">Multi-AZ</div>
+          <div class="kpi-label">HIGH AVAILABILITY</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIAGRAM -->
+    <section>
+      <div class="section-wrap">
+        <div class="sec-num">// 01</div>
+        <div class="sec-title">ARCHITECTURE DIAGRAM</div>
+        <div class="sec-line"></div>
+        <p class="sec-sub">
+          이 다이어그램은 Zerowake Gates의 게임 서버 전체 구성을 도식화한
+          설계도입니다.<br />
+          Delay(접속 대기), Login(인증), Game(게임 플레이) 3개 레이어로 트래픽을
+          분리하고,<br />
+          각각 독립적인 ALB와 ElastiCache, RDS Proxy를 배치하여 장애 격리와
+          확장성을 확보했습니다.
+        </p>
+        <div class="arch-diagram-wrap fi">
+          <div class="arch-diagram-header">
+            <div class="arch-dot ad-r"></div>
+            <div class="arch-dot ad-y"></div>
+            <div class="arch-dot ad-g"></div>
+            <span class="arch-diagram-title"
+              >server_architecture.diagram &mdash; Game Server Architecture
+              (Singapore Region)</span
+            >
+          </div>
+          <img
+            src="server_arch.png"
+            alt="Game Server Architecture Diagram"
+            class="arch-diagram-img"
+            onclick="openLb(this.src)"
+          />
+          <div class="arch-diagram-caption">
+            이미지를 클릭하면 확대해서 볼 수 있습니다 &nbsp;&middot;&nbsp; CCU
+            50k~200k+ &nbsp;&middot;&nbsp; DAU 500k~1.6M+ &nbsp;&middot;&nbsp;
+            Singapore Region
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPONENTS TABLE -->
+    <section class="bg-alt">
+      <div class="section-wrap">
+        <div class="sec-num">// 02</div>
+        <div class="sec-title">COMPONENT BREAKDOWN</div>
+        <div class="sec-line"></div>
+        <p class="sec-sub">
+          각 컴포넌트의 역할과 기술 선택 이유를 정리했습니다.
+        </p>
+        <div class="fi" style="overflow-x: auto">
+          <table class="comp-table">
+            <thead>
+              <tr>
+                <th>COMPONENT</th>
+                <th>ROLE</th>
+                <th>TECH</th>
+                <th>DESIGN REASON</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="comp-name">Delay Server</div>
+                  <div class="comp-badge cb-node">Node.js</div>
+                  <div class="comp-badge cb-aws">EC2 &times;1</div>
+                </td>
+                <td>접속 대기열 관리<br />CCU 초과 시 큐잉</td>
+                <td>AWS ALB<br />ElastiCache (Redis)</td>
+                <td>
+                  게임 서버 CCU 한계 도달 시 유저를 대기열에 보관하고 순서대로
+                  입장시킵니다. Delay Redis에 대기 상태를 저장해 서버 재시작에도
+                  대기 정보가 유지됩니다.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="comp-name">Login Server</div>
+                  <div class="comp-badge cb-node">Node.js</div>
+                  <div class="comp-badge cb-aws">EC2 &times;2 Multi-AZ</div>
+                </td>
+                <td>인증&middot;토큰 발급<br />플랫폼 로그인 통합</td>
+                <td>JWT (Access/Refresh)<br />Firebase, Steam, EroLabs</td>
+                <td>
+                  인증 레이어를 게임 로직과 분리하여 보안 코드 변경이 게임
+                  서버에 영향을 주지 않습니다. Multi-AZ 2인스턴스로 Login 서버
+                  장애 시에도 인증이 중단되지 않습니다.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="comp-name">Game Server</div>
+                  <div class="comp-badge cb-node">Node.js</div>
+                  <div class="comp-badge cb-aws">EC2 &times;4 Multi-AZ</div>
+                </td>
+                <td>게임 핵심 로직<br />콘텐츠 API 전반</td>
+                <td>AWS ALB<br />RDS Proxy, Redis</td>
+                <td>
+                  4인스턴스 Multi-AZ 구성으로 AZ 장애 시에도 서비스가
+                  유지됩니다. Token/Ticket 검증은 Login 서버에 위임하여 Game
+                  서버는 게임 로직에만 집중합니다.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="comp-name">Game Redis</div>
+                  <div class="comp-badge cb-redis">ElastiCache</div>
+                </td>
+                <td>세션 관리<br />Refresh Token 저장<br />CCU 산정</td>
+                <td>Redis Cluster<br />ElastiCache</td>
+                <td>
+                  Refresh Token을 Redis에 단일 저장하여 세션 정합성을
+                  유지합니다. 신규 로그인 시 기존 토큰을 즉시 폐기해 중복
+                  로그인을 방지합니다. 현재 CCU도 Redis 키 수로 산정합니다.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="comp-name">RDS Proxy (User)</div>
+                  <div class="comp-badge cb-mysql">MySQL</div>
+                  <div class="comp-badge cb-aws">RDS Proxy</div>
+                </td>
+                <td>유저 데이터 읽기/쓰기<br />DB 연결 풀링</td>
+                <td>AWS RDS Proxy<br />RDS MySQL</td>
+                <td>
+                  Game 서버 4인스턴스에서 직접 DB에 연결하면 커넥션이 폭발적으로
+                  증가합니다. RDS Proxy가 연결 풀을 관리해 DB 부하를 크게 줄이고
+                  DB 장애 시 재연결 속도를 높입니다.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="comp-name">RDS Proxy (Log)</div>
+                  <div class="comp-badge cb-mysql">MySQL</div>
+                  <div class="comp-badge cb-aws">RDS Proxy</div>
+                </td>
+                <td>게임 로그 Write 전용<br />유저 DB와 분리</td>
+                <td>AWS RDS Proxy<br />RDS MySQL (Write Only)</td>
+                <td>
+                  로그 DB를 유저 DB와 분리하여 대량 로그 쓰기가 유저 데이터
+                  조회에 영향을 주지 않습니다. Write Only로 설정해 로그 DB에
+                  읽기 쿼리가 유입되는 것을 구조적으로 차단합니다.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN DECISIONS -->
+    <section>
+      <div class="section-wrap">
+        <div class="sec-num">// 03</div>
+        <div class="sec-title">KEY DESIGN DECISIONS</div>
+        <div class="sec-line"></div>
+        <p class="sec-sub">
+          단순 기능 구현이 아닌, 문제를 인식하고 설계 결정을 내린 핵심
+          포인트들입니다.
+        </p>
+        <div class="decision-grid">
+          <div class="decision-card c1 fi fi-d1">
+            <div class="decision-num">DECISION 01</div>
+            <div class="decision-title">
+              3-TIER SERVER SEPARATION<br />역할별 서버 레이어 분리
+            </div>
+            <div class="decision-problem">
+              <div class="dp-label">&#10005; PROBLEM</div>
+              <div class="dp-text">
+                단일 서버에 모든 로직이 집중되면 CCU 급증 시 인증&middot;게임
+                로직이 함께 병목됩니다. 인증 코드 수정이 게임 로직 배포에 영향을
+                줍니다.
+              </div>
+            </div>
+            <div class="decision-problem">
+              <div class="solution-label">&#10003; SOLUTION</div>
+              <div class="solution-text">
+                Delay / Login / Game 서버를 역할별로 완전 분리하고 각각 독립적인
+                ALB를 배치했습니다. 레이어별 독립 스케일링이 가능합니다.
+              </div>
+            </div>
+            <div class="decision-effect">
+              CCU 급증 시 Game 서버만 스케일 아웃 가능
+            </div>
+          </div>
+
+          <div class="decision-card c2 fi fi-d2">
+            <div class="decision-num">DECISION 02</div>
+            <div class="decision-title">
+              JWT DUAL TOKEN + REDIS SESSION<br />이중 토큰 & 세션 단일화
+            </div>
+            <div class="decision-problem">
+              <div class="dp-label">&#10005; PROBLEM</div>
+              <div class="dp-text">
+                Access Token만 사용하면 만료 주기를 길게 설정해야 하고, 도용된
+                토큰을 즉시 무효화할 수 없습니다. 중복 로그인 방지도
+                불가능합니다.
+              </div>
+            </div>
+            <div class="decision-problem">
+              <div class="solution-label">&#10003; SOLUTION</div>
+              <div class="solution-text">
+                Access Token(10분, Header)과 Refresh Token(15분, HttpOnly
+                Cookie)을 분리하고, Refresh Token을 Redis에 단일 저장하여 신규
+                로그인 시 기존 세션을 즉시 폐기합니다.
+              </div>
+            </div>
+            <div class="decision-effect">
+              중복 로그인 방지 + 도용 토큰 즉시 무효화
+            </div>
+          </div>
+
+          <div class="decision-card c3 fi fi-d3">
+            <div class="decision-num">DECISION 03</div>
+            <div class="decision-title">
+              RDS PROXY CONNECTION POOLING<br />DB 연결 폭발 방지
+            </div>
+            <div class="decision-problem">
+              <div class="dp-label">&#10005; PROBLEM</div>
+              <div class="dp-text">
+                Game Server 4인스턴스 × Node.js 프로세스가 직접 RDS에 연결하면
+                커넥션이 수백 개로 폭발합니다. RDS MySQL의 max_connections
+                한계에 도달할 위험이 있습니다.
+              </div>
+            </div>
+            <div class="decision-problem">
+              <div class="solution-label">&#10003; SOLUTION</div>
+              <div class="solution-text">
+                AWS RDS Proxy를 앞단에 두어 커넥션 풀을 중앙 관리합니다. 서버
+                인스턴스가 늘어도 실제 DB 연결 수는 일정하게 유지되고, Proxy가
+                DB 재시작 시 재연결을 처리합니다.
+              </div>
+            </div>
+            <div class="decision-effect">
+              DB 커넥션 수 통제 + 장애 복구 속도 개선
+            </div>
+          </div>
+
+          <div class="decision-card c4 fi fi-d1">
+            <div class="decision-num">DECISION 04</div>
+            <div class="decision-title">
+              QUEUE SERVER (DELAY SERVER)<br />접속 대기열로 CCU 상한 제어
+            </div>
+            <div class="decision-problem">
+              <div class="dp-label">&#10005; PROBLEM</div>
+              <div class="dp-text">
+                CCU가 게임 서버의 처리 한계를 초과하면 서버가 다운되거나 응답이
+                지연됩니다. 갑작스러운 트래픽 피크를 서버 스케일 아웃만으로 즉시
+                대응하기 어렵습니다.
+              </div>
+            </div>
+            <div class="decision-problem">
+              <div class="solution-label">&#10003; SOLUTION</div>
+              <div class="solution-text">
+                전용 Delay Server와 Delay Redis를 분리하여 CCU 한계 초과 시
+                유저를 대기열에 보관합니다. 게임 서버가 여유가 생기는 즉시
+                순서대로 입장을 처리합니다.
+              </div>
+            </div>
+            <div class="decision-effect">
+              서버 과부하 없이 유저 경험 유지 가능
+            </div>
+          </div>
+
+          <div class="decision-card c5 fi fi-d2">
+            <div class="decision-num">DECISION 05</div>
+            <div class="decision-title">
+              LOG DB WRITE-ONLY SEPARATION<br />로그 DB 쓰기 전용 분리
+            </div>
+            <div class="decision-problem">
+              <div class="dp-label">&#10005; PROBLEM</div>
+              <div class="dp-text">
+                게임 중 발생하는 대량의 로그(전투, 구매, 접속) 쓰기가 유저
+                데이터 조회 쿼리와 동일한 DB에서 경합하면 게임 플레이에 지연이
+                발생합니다.
+              </div>
+            </div>
+            <div class="decision-problem">
+              <div class="solution-label">&#10003; SOLUTION</div>
+              <div class="solution-text">
+                Log DB를 User DB와 완전 분리하고 Write Only로 설정했습니다.
+                대용량 로그 인서트가 유저 조회 성능에 전혀 영향을 주지 않는
+                구조를 만들었습니다.
+              </div>
+            </div>
+            <div class="decision-effect">게임 로직과 로그 I/O 완전 격리</div>
+          </div>
+
+          <div class="decision-card c6 fi fi-d3">
+            <div class="decision-num">DECISION 06</div>
+            <div class="decision-title">
+              MULTI-AZ DEPLOYMENT<br />AZ 장애 대비 고가용성
+            </div>
+            <div class="decision-problem">
+              <div class="dp-label">&#10005; PROBLEM</div>
+              <div class="dp-text">
+                글로벌 서비스에서 특정 AWS Availability Zone에 장애가 발생하면
+                서비스 전체가 중단될 위험이 있습니다. 특히 Login 서버 장애는
+                전체 인증 불가로 이어집니다.
+              </div>
+            </div>
+            <div class="decision-problem">
+              <div class="solution-label">&#10003; SOLUTION</div>
+              <div class="solution-text">
+                Login 서버(2인스턴스)와 Game 서버(4인스턴스)를 Multi-AZ로
+                배포했습니다. 하나의 AZ가 전체 장애를 일으켜도 나머지 AZ의
+                인스턴스가 서비스를 이어받습니다.
+              </div>
+            </div>
+            <div class="decision-effect">
+              단일 AZ 장애 시 서비스 무중단 유지
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGIN FLOW -->
+    <section class="bg-alt">
+      <div class="section-wrap">
+        <div class="sec-num">// 04</div>
+        <div class="sec-title">LOGIN &amp; SESSION FLOW</div>
+        <div class="sec-line"></div>
+        <p class="sec-sub">
+          유저가 로그인해서 게임 서버에 접속하기까지의 흐름입니다. Token/Ticket
+          검증이 핵심입니다.
+        </p>
+        <div class="flow-steps">
+          <div class="flow-step fi">
+            <div class="flow-left">
+              <div class="flow-circle">01</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-content">
+              <div class="flow-title">
+                PLATFORM AUTH &mdash; 플랫폼 인증 토큰 수신
+              </div>
+              <div class="flow-desc">
+                유저가 Firebase (iOS/AOS), Steam, EroLabs 중 하나로
+                로그인합니다. 클라이언트는 플랫폼 SDK로부터 받은
+                platform_token을 Login 서버로 전송합니다.
+              </div>
+              <div class="flow-detail">
+                <span class="hl">POST</span> /auth/login &nbsp;{ platform:
+                <span class="hl2">"firebase"</span>, platform_token:
+                <span class="hl2">"..."</span> }
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step fi">
+            <div class="flow-left">
+              <div class="flow-circle">02</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-content">
+              <div class="flow-title">
+                TOKEN ISSUANCE &mdash; JWT 발급 & Redis 세션 저장
+              </div>
+              <div class="flow-desc">
+                Login 서버가 플랫폼 토큰을 검증한 뒤 Access Token과 Refresh
+                Token을 생성합니다. Refresh Token은 Redis에 저장하고, 기존
+                세션이 있으면 즉시 폐기합니다.
+              </div>
+              <div class="flow-detail">
+                <span class="hl">Redis</span>: SET user:<span class="hl2"
+                  >{user_id}</span
+                >:refresh &nbsp;<span class="hl2">"new_token"</span> &nbsp;EX
+                900<br />
+                <span class="hl">Response</span>: access_token (Header) +
+                refresh_token (<span class="hl3">HttpOnly Cookie</span>)
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step fi">
+            <div class="flow-left">
+              <div class="flow-circle">03</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-content">
+              <div class="flow-title">
+                DELAY CHECK &mdash; CCU 초과 시 대기열 진입
+              </div>
+              <div class="flow-desc">
+                유저가 게임 서버 입장을 시도하면 Delay Server가 현재 CCU를
+                확인합니다. 한계 초과 시 Delay Redis에 대기 정보를 저장하고 대기
+                순번을 반환합니다.
+              </div>
+              <div class="flow-detail">
+                Delay Redis: CCU check → &nbsp;<span class="hl2">QUEUE</span>
+                또는 <span class="hl3">PASS</span><br />
+                대기 시: queue_position + estimated_wait_seconds 반환
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step fi">
+            <div class="flow-left">
+              <div class="flow-circle">04</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-content">
+              <div class="flow-title">
+                TICKET ISSUE &mdash; 입장 Ticket 발급
+              </div>
+              <div class="flow-desc">
+                CCU 여유 확인 후 Login 서버가 단기 유효 입장 Ticket을
+                발급합니다. 이 Ticket은 Game 서버 입장 시 1회만 사용 가능하며
+                재사용이 불가합니다.
+              </div>
+              <div class="flow-detail">
+                Ticket: <span class="hl2">short-lived</span>,
+                <span class="hl3">single-use</span> &nbsp;/ &nbsp;Game 서버 입장
+                시 Login 서버에 검증 위임
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step fi">
+            <div class="flow-left"><div class="flow-circle">05</div></div>
+            <div class="flow-content">
+              <div class="flow-title">
+                GAME SERVER ENTRY &mdash; Token/Ticket 이중 검증 후 입장
+              </div>
+              <div class="flow-desc">
+                Game 서버는 Access Token과 입장 Ticket을 모두 Login 서버에 검증
+                위임합니다. 두 검증이 모두 통과된 경우에만 게임 API 접근을
+                허용합니다. RDS Proxy를 통해 유저 데이터에 접근합니다.
+              </div>
+              <div class="flow-detail">
+                Token/Ticket Verification:
+                <span class="hl2">Game Server</span> &rarr;
+                <span class="hl">Login Server</span> (위임 검증)<br />
+                DB Access: Game Server &rarr;
+                <span class="hl3">RDS Proxy (User)</span> &rarr; RDS MySQL
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCALE BANNER -->
+    <section>
+      <div class="section-wrap">
+        <div class="sec-num">// 05</div>
+        <div class="sec-title">SERVICE SCALE</div>
+        <div class="sec-line"></div>
+        <div class="scale-banner fi">
+          <div class="scale-grid">
+            <div>
+              <div class="scale-num" style="color: var(--accent)">200k+</div>
+              <div class="scale-label">PEAK CCU<br />최대 동시 접속자</div>
+            </div>
+            <div>
+              <div class="scale-num" style="color: var(--accent2)">1.6M+</div>
+              <div class="scale-label">PEAK DAU<br />최대 일일 활성 유저</div>
+            </div>
+            <div>
+              <div class="scale-num" style="color: var(--accent3)">7</div>
+              <div class="scale-label">
+                TOTAL EC2 INSTANCES<br />게임 서버 인스턴스
+              </div>
+            </div>
+            <div>
+              <div class="scale-num" style="color: var(--accent4)">2</div>
+              <div class="scale-label">RDS PROXIES<br />User + Log 분리</div>
+            </div>
+            <div>
+              <div class="scale-num" style="color: #ec4899">3</div>
+              <div class="scale-label">ALB COUNT<br />역할별 독립 LB</div>
+            </div>
+            <div>
+              <div class="scale-num" style="color: #06b6d4">SGP</div>
+              <div class="scale-label">AWS REGION<br />Singapore (Global)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY CONTRIBUTIONS -->
+    <section class="bg-alt">
+      <div class="section-wrap">
+        <div class="sec-num">// 06</div>
+        <div class="sec-title">MY CONTRIBUTIONS</div>
+        <div class="sec-line"></div>
+        <p class="sec-sub">
+          이 아키텍처에서 직접 설계하고 구현한 영역들입니다.
+        </p>
+        <div class="contrib-grid">
+          <div class="contrib-card fi fi-d1">
+            <span class="contrib-icon">&#127959;</span>
+            <div class="contrib-title">ARCHITECTURE DESIGN</div>
+            <div class="contrib-desc">
+              서버 파트 리드로서 Delay/Login/Game 3-tier 분리 구조를 직접
+              설계했습니다. 트래픽 흐름, AZ 배치, DB 분리 전략까지 아키텍처
+              전반의 의사결정을 주도했습니다.
+            </div>
+            <div class="contrib-tags">
+              <span class="ctag">System Design</span
+              ><span class="ctag">AWS</span><span class="ctag">Multi-AZ</span>
+            </div>
+          </div>
+          <div class="contrib-card fi fi-d2">
+            <span class="contrib-icon">&#128272;</span>
+            <div class="contrib-title">AUTH SYSTEM IMPL</div>
+            <div class="contrib-desc">
+              JWT Access/Refresh Token 이중 설계를 직접 구현했습니다. Redis를
+              활용한 세션 단일화, 중복 로그인 방지, HttpOnly Cookie를 통한 XSS
+              방어까지 구현했습니다.
+            </div>
+            <div class="contrib-tags">
+              <span class="ctag">JWT</span><span class="ctag">Redis</span
+              ><span class="ctag">Security</span>
+            </div>
+          </div>
+          <div class="contrib-card fi fi-d3">
+            <span class="contrib-icon">&#9889;</span>
+            <div class="contrib-title">DELAY SERVER &amp; QUEUE</div>
+            <div class="contrib-desc">
+              접속 대기열 서버 전체를 설계하고 구현했습니다. Delay Redis 기반
+              대기 상태 관리, 순번 배분, CCU 여유 감지 후 자동 입장 처리 로직을
+              개발했습니다.
+            </div>
+            <div class="contrib-tags">
+              <span class="ctag">Queue System</span
+              ><span class="ctag">Redis</span><span class="ctag">Node.js</span>
+            </div>
+          </div>
+          <div class="contrib-card fi fi-d1">
+            <span class="contrib-icon">&#128202;</span>
+            <div class="contrib-title">CCU MONITORING</div>
+            <div class="contrib-desc">
+              InfluxDB 기반 5분 단위 CCU 수집 시스템을 구축했습니다. Redis의
+              현재 세션 수를 기반으로 CCU를 산정하고 GoogleChat 알림 봇을
+              연동하여 이상 감지를 자동화했습니다.
+            </div>
+            <div class="contrib-tags">
+              <span class="ctag">InfluxDB</span
+              ><span class="ctag">Monitoring</span
+              ><span class="ctag">Alert Bot</span>
+            </div>
+          </div>
+          <div class="contrib-card fi fi-d2">
+            <span class="contrib-icon">&#127757;</span>
+            <div class="contrib-title">MULTI-PLATFORM LOGIN</div>
+            <div class="contrib-desc">
+              Firebase(iOS/AOS), Steam, EroLabs 3개 플랫폼의 인증 통합을
+              구현했습니다. 플랫폼별 토큰 검증 로직을 추상화하여 신규 플랫폼
+              추가 시 최소 코드 변경으로 확장 가능합니다.
+            </div>
+            <div class="contrib-tags">
+              <span class="ctag">Firebase</span><span class="ctag">Steam</span
+              ><span class="ctag">EroLabs</span>
+            </div>
+          </div>
+          <div class="contrib-card fi fi-d3">
+            <span class="contrib-icon">&#128736;</span>
+            <div class="contrib-title">ADMIN TOOL (운영툴)</div>
+            <div class="contrib-desc">
+              단일앱 통합 운영툴을 설계하고 구현했습니다. 유저 관리, 로그 조회,
+              우편 발송, 서버 점검 모드 제어 기능을 권한 관리 시스템과 함께
+              개발했습니다.
+            </div>
+            <div class="contrib-tags">
+              <span class="ctag">Admin Panel</span><span class="ctag">RBAC</span
+              ><span class="ctag">Node.js</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="f-left">
+        &copy; 2025 NAYOUNG LEE &middot; GAME BACKEND DEVELOPER &middot; SERVER
+        ARCHITECTURE
+      </div>
+      <div class="f-right">
+        <a href="portfolio_nayoung.html">&larr; 포트폴리오로 돌아가기</a>
+      </div>
+    </footer>
+
+    <!-- LIGHTBOX -->
+    <div class="lb" id="lb" onclick="closeLb()">
+      <span class="lb-close" onclick="closeLb()">&times;</span>
+      <img id="lbImg" src="" alt="" />
+      <div class="lb-hint">ESC 또는 클릭으로 닫기</div>
+    </div>
+
+    <script>
+      // THEME
+      var html = document.documentElement,
+        toggle = document.getElementById("themeToggle"),
+        lbl = document.getElementById("ttLabel"),
+        ico = document.getElementById("ttIcon");
+      var saved = localStorage.getItem("ny_theme") || "dark";
+      setTheme(saved);
+      toggle.addEventListener("click", function () {
+        var n = html.dataset.theme === "dark" ? "light" : "dark";
+        setTheme(n);
+        localStorage.setItem("ny_theme", n);
+      });
+      function setTheme(t) {
+        html.dataset.theme = t;
+        lbl.textContent = t === "dark" ? "DARK" : "LIGHT";
+        ico.textContent = t === "dark" ? "\u{1F319}" : "\u2600\uFE0F";
+      }
+
+      // SCROLL FADE IN
+      var obs = new IntersectionObserver(
+        function (es) {
+          es.forEach(function (e) {
+            if (e.isIntersecting) e.target.classList.add("v");
+          });
+        },
+        { threshold: 0.07 },
+      );
+      document.querySelectorAll(".fi").forEach(function (el) {
+        obs.observe(el);
+      });
+
+      // LIGHTBOX
+      function openLb(src) {
+        document.getElementById("lb").classList.add("open");
+        document.getElementById("lbImg").src = src;
+      }
+      function closeLb() {
+        document.getElementById("lb").classList.remove("open");
+      }
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeLb();
+      });
+    </script>
+  </body>
+</html>

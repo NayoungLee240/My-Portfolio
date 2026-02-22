@@ -2,15 +2,15 @@ import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
-  { label: "HOME", href: "/#hero" },
-  { label: "SKILLS", href: "/#skills" },
-  { label: "EXP", href: "/#experience" },
-  { label: "PROJECTS", href: "/#showcase" },
-  { label: "ARCH", href: "/#architecture" },
-  { label: "METRICS", href: "/#metrics" },
-  { label: "BLOG", href: "/#blog" },
-  { label: "API DOCS", href: "/#api-cta" },
-  { label: "CONTACT", href: "/#contact" },
+  { label: "HOME", href: "#hero" },
+  { label: "SKILLS", href: "#skills" },
+  { label: "EXP", href: "#experience" },
+  { label: "PROJECTS", href: "#showcase" },
+  { label: "ARCH", href: "#architecture" },
+  { label: "METRICS", href: "#metrics" },
+  { label: "BLOG", href: "#blog" },
+  { label: "API DOCS", href: "#api-cta" },
+  { label: "CONTACT", href: "#contact" },
 ];
 
 // 상단 고정 네비게이션 - 테마 토글 포함
