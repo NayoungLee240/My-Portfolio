@@ -38,7 +38,7 @@ export default function ApiCta() {
             <br />
             <br />
             <Link
-              href="/api-docs"
+              href="/#api-cta" // 미구현
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-primary"
