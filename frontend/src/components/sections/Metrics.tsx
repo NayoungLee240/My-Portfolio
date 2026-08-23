@@ -3,8 +3,8 @@ const metrics = [
   { num: '20만', label: 'MAX CCU\n최대 동접자' },
   { num: '6만', label: 'STABLE CCU\n상시 동접자' },
   { num: '4+', label: 'LIVE GAMES\n운영 경험' },
-  { num: '4.9', label: 'YEARS\n총 개발 경력' },
-  { num: '5분', label: 'CCU 수집 주기\nINTERVAL' },
+  { num: '5.2', label: 'YEARS\n총 개발 경력' },
+  { num: '실시간', label: 'CCU 집계 방식\nREAL-TIME' },
   { num: 'UTC', label: 'TIME STANDARD\n글로벌 기준' },
 ];
 

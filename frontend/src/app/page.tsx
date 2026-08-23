@@ -34,7 +34,7 @@ const fallbackAbout: AboutData = {
   email: "iny003@naver.com",
   blog: "https://lyeo-code.tistory.com/",
   notion: "https://nayoung-lee.notion.site/fcbd5946265d4b9082c1021dd7701ba0",
-  stats: { totalExp: "4.9", maxCCU: "20만", stableCCU: "6만", liveGames: "4+" },
+  stats: { totalExp: "5.2", maxCCU: "20만", stableCCU: "6만", liveGames: "4+" },
 };
 
 const fallbackSkills: SkillCategory[] = [
@@ -66,7 +66,6 @@ const fallbackSkills: SkillCategory[] = [
       { name: "MSSQL", type: "gray" },
       { name: "PostgreSQL", type: "gray" },
       { name: "Redis", type: "purple" },
-      { name: "InfluxDB", type: "green" },
     ],
   },
   {

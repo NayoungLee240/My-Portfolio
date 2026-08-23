@@ -3,7 +3,7 @@ import Link from "next/link";
 // API 문서 안내 섹션 - 주요 엔드포인트 미리보기 + Swagger 링크
 const endpoints = [
   { method: "POST", path: "/auth/login", desc: "플랫폼 로그인" },
-  { method: "POST", path: "/auth/refresh", desc: "토큰 갱신" },
+  { method: "POST", path: "/auth/logout", desc: "로그아웃 (세션 폐기)" },
   { method: "GET", path: "/server/status", desc: "서버 상태 / CCU" },
   { method: "GET", path: "/game/shop/items", desc: "상점 아이템" },
   { method: "POST", path: "/game/shop/purchase", desc: "아이템 구매" },

@@ -30,7 +30,6 @@ export class SkillsService {
           { name: 'MSSQL', type: 'gray' },
           { name: 'PostgreSQL', type: 'gray' },
           { name: 'Redis', type: 'purple' },
-          { name: 'InfluxDB', type: 'green' },
         ],
       },
       {

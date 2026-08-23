@@ -43,6 +43,11 @@ export default function Hero({ about }: { about: AboutData }) {
         </div>
         <div className="hero-title">{about.subtitle}</div>
         <p className="hero-desc">{about.summary}</p>
+        <p className="hero-side-note">
+          현재 대규모 동시입찰을 처리하는 경매 서버를 개인 프로젝트로 설계 중입니다 (
+          <a href={about.blog} target="_blank" rel="noopener noreferrer">기술 블로그 연재</a>
+          )
+        </p>
         <div className="hero-stats">
           <div className="stat">
             <div className="stat-num">{expNum}<span className="stat-unit">년</span></div>

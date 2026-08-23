@@ -6,13 +6,13 @@ export default function Architecture() {
     {
       icon: '🔐',
       title: 'AUTH SYSTEM',
-      desc: 'JWT 기반 Access/Refresh Token 분리 설계. Access Token은 API Header, Refresh Token은 HTTP Cookie에 저장하는 이중 검증 구조로 보안성을 강화했습니다.',
-      hl: 'Access: 10min / Refresh: 15min · 중복 로그인 방지',
+      desc: 'API 호출마다 JWT Access Token을 새로 발급하는 구조로 설계했습니다. 토큰이 매 요청마다 1회성으로 교체되므로 탈취된 토큰은 다음 요청에서 자동으로 무효화됩니다.',
+      hl: '요청 단위 토큰 재발급 · Refresh Token 미사용',
     },
     {
       icon: '⚡',
       title: 'SESSION CONTROL',
-      desc: 'Redis에 Refresh Token 단일 저장 구조로 세션 정합성 유지. 신규 로그인 시 기존 토큰을 폐기하여 동시 접속 환경에서도 안정적인 세션 관리를 구현했습니다.',
+      desc: 'Redis에 로그인 세션을 저장해 인증 상태를 관리합니다. 신규 로그인 시 기존 세션을 즉시 폐기하여 동시 접속 환경에서도 중복 로그인 없이 안정적인 세션 관리를 구현했습니다.',
       hl: 'ElastiCache Redis · 세션 단일 진실 공급원',
     },
     {
@@ -22,10 +22,10 @@ export default function Architecture() {
       hl: 'EC2 + Load Balancer · 수평 확장 구조',
     },
     {
-      icon: '📊',
-      title: 'LIVE MONITORING',
-      desc: 'InfluxDB 기반 지표 수집으로 동접자 수를 5분 단위로 저장하고 추이를 분석합니다. AWS Load Balancer 지표와 비교하여 트래픽 패턴을 정량적으로 모니터링합니다.',
-      hl: 'InfluxDB · AWS CloudWatch · 알림 봇',
+      icon: '🔄',
+      title: 'LIVE MIGRATION',
+      desc: '대규모 트래픽 환경에서 테이블 락 없이 스키마를 변경하기 위해, 정기점검 시 애플리케이션 코드만 우선 배포하고 실제 레코드 마이그레이션은 유저 로그인 시점에 지연 처리하는 방식을 적용. 전체 배치 마이그레이션 대비 DB 부하를 트래픽에 분산시켜 서비스 영향 없이 완료.',
+      hl: '정기점검 배포 + 로그인 시점 지연 마이그레이션 · 무중단 스키마 변경',
     },
     {
       icon: '🌍',

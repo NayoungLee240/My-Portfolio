@@ -3,19 +3,19 @@ const cards = [
   {
     icon: '🧑‍💻',
     title: 'BACKEND LEAD',
-    desc: 'Node.js 기반 게임 백엔드 개발 4년 9개월. 서버 파트 리드로서 아키텍처 설계부터 글로벌 라이브 운영까지 전담.',
+    desc: 'Node.js 기반 게임 백엔드 개발 5년 2개월. 서버 파트 리드로서 아키텍처 설계부터 글로벌 라이브 운영까지 전담.',
     hl: "글로벌 RPG 'Zerowake Gates' 백엔드 총괄",
   },
   {
     icon: '⚙️',
     title: 'SERVER DESIGN',
-    desc: '로그인 / 대기 / 게임 / 운영툴 서버 역할 분리 설계. JWT Access/Refresh Token 이중 인증 설계·구현. PM2 Cluster + RDS Proxy로 안정성 확보.',
+    desc: '로그인 / 대기 / 게임 / 운영툴 서버 역할 분리 설계. 요청 단위로 JWT를 재발급하는 인증 구조 설계·구현. PM2 Cluster + RDS Proxy로 안정성 확보.',
     hl: '3-tier 아키텍처 · 수평 확장 구조',
   },
   {
     icon: '🌍',
     title: 'SCALE & OPS',
-    desc: '상시 6만 / 최대 20만 동접, DAU 50만~160만 규모 서비스 운영. InfluxDB 기반 5분 단위 CCU 수집. Firebase, Steam, EroLabs 멀티 플랫폼 통합.',
+    desc: '상시 6만 / 최대 20만 동접, DAU 50만~160만 규모 서비스 운영. MySQL 기반 실시간 CCU 집계. Firebase, Steam, EroLabs 멀티 플랫폼 통합.',
     hl: 'Singapore Region · 글로벌 서비스',
   },
   {

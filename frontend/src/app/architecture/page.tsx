@@ -177,7 +177,7 @@ export default function ArchitecturePage() {
                     플랫폼 로그인 통합
                   </td>
                   <td>
-                    JWT (Access/Refresh)
+                    JWT (요청 단위 재발급)
                     <br />
                     Firebase, Steam, EroLabs
                   </td>
@@ -217,7 +217,7 @@ export default function ArchitecturePage() {
                   <td>
                     세션 관리
                     <br />
-                    Refresh Token 저장
+                    로그인 세션 저장
                     <br />
                     CCU 산정
                   </td>
@@ -227,8 +227,8 @@ export default function ArchitecturePage() {
                     ElastiCache
                   </td>
                   <td>
-                    Refresh Token을 Redis에 단일 저장하여 세션 정합성을
-                    유지합니다. 신규 로그인 시 기존 토큰을 즉시 폐기해 중복
+                    로그인 세션을 Redis에 단일 저장하여 세션 정합성을
+                    유지합니다. 신규 로그인 시 기존 세션을 즉시 폐기해 중복
                     로그인을 방지합니다. 현재 CCU도 Redis 키 수로 산정합니다.
                   </td>
                 </tr>
@@ -308,12 +308,12 @@ export default function ArchitecturePage() {
                 color: "c2",
                 num: "02",
                 title:
-                  "JWT DUAL TOKEN + REDIS SESSION\n이중 토큰 & 세션 단일화",
+                  "JWT PER-REQUEST ROTATION + REDIS SESSION\n요청 단위 토큰 재발급 & 세션 단일화",
                 problem:
-                  "Access Token만 사용하면 만료 주기를 길게 설정해야 하고, 도용된 토큰을 즉시 무효화할 수 없습니다. 중복 로그인 방지도 불가능합니다.",
+                  "Access Token의 유효 기간을 길게 두면 탈취 시 오랫동안 악용될 수 있고, Refresh Token 구조는 별도 저장·순환 로직이 필요해 구현과 운영이 복잡해집니다.",
                 solution:
-                  "Access Token(10분, Header)과 Refresh Token(15분, HttpOnly Cookie)을 분리하고, Refresh Token을 Redis에 단일 저장하여 신규 로그인 시 기존 세션을 즉시 폐기합니다.",
-                effect: "중복 로그인 방지 + 도용 토큰 즉시 무효화",
+                  "API 호출마다 Access Token을 새로 발급해 토큰 수명을 사실상 1회성으로 만들었습니다. Redis에는 로그인 세션만 단일 저장하여 신규 로그인 시 기존 세션을 즉시 폐기합니다.",
+                effect: "중복 로그인 방지 + 탈취 토큰 자동 무효화 (Refresh Token 불필요)",
               },
               {
                 color: "c3",
@@ -456,18 +456,18 @@ export default function ArchitecturePage() {
               {
                 step: "04",
                 title: "TOKEN ISSUANCE — JWT 발급 & Redis 세션 저장",
-                desc: "Login 서버가 플랫폼 토큰을 검증한 뒤 Access Token과 Refresh Token을 생성합니다. Refresh Token은 Redis에 저장하고, 기존 세션이 있으면 즉시 폐기합니다.(중복 로그인 방지)",
+                desc: "Login 서버가 플랫폼 토큰을 검증한 뒤 JWT Access Token을 발급합니다. 동시에 Redis에 로그인 세션을 저장하고, 기존 세션이 있으면 즉시 폐기합니다.(중복 로그인 방지)",
                 detail: (
                   <>
-                    <span className="hl">Redis</span>: SET user:
+                    <span className="hl">Redis</span>: SET session:
                     <span className="hl2">
                       &#123;user_id&#125;
-                    </span>:refresh{" "}
-                    <span className="hl2">&quot;new_token&quot;</span> EX 900
+                    </span>{" "}
+                    <span className="hl2">&quot;active&quot;</span> EX 1800
+                    (요청마다 TTL 갱신)
                     <br />
-                    <span className="hl">Response</span>: access_token (Header)
-                    + refresh_token (
-                    <span className="hl3">HttpOnly Cookie</span>)
+                    <span className="hl">Response</span>: access_token
+                    (Header, 매 API 호출마다 신규 발급)
                   </>
                 ),
                 last: true,
@@ -569,7 +569,7 @@ export default function ArchitecturePage() {
               {
                 icon: "🔑",
                 title: "AUTH SYSTEM IMPL",
-                desc: "JWT Access/Refresh Token 이중 설계를 직접 구현했습니다. Redis를 활용한 세션 단일화, 중복 로그인 방지, HttpOnly Cookie를 통한 XSS 방어까지 구현했습니다.",
+                desc: "요청 단위로 JWT Access Token을 재발급하는 인증 구조를 직접 설계·구현했습니다. Redis 세션으로 로그인 상태를 관리해 중복 로그인을 방지하고, Refresh Token 없이도 탈취 토큰이 다음 요청에서 자동 무효화되도록 설계했습니다.",
                 tags: ["JWT", "Redis", "Security"],
                 delay: "fi-d2",
               },
@@ -581,10 +581,10 @@ export default function ArchitecturePage() {
                 delay: "fi-d3",
               },
               {
-                icon: "📊",
-                title: "CCU MONITORING",
-                desc: "InfluxDB 기반 5분 단위 CCU 수집 시스템을 구축했습니다. Redis의 현재 세션 수를 기반으로 CCU를 산정하고 GoogleChat 알림 봇을 연동하여 이상 감지를 자동화했습니다.",
-                tags: ["InfluxDB", "Monitoring", "Alert Bot"],
+                icon: "🔄",
+                title: "DB MIGRATION",
+                desc: "InfluxDB 지표 서버를 MySQL로 통합하는 마이그레이션을 직접 설계·수행했습니다. 검색 적합성 저하로 키 구조 변경이 필요했던 핵심 테이블은 정기점검 코드 배포 + 로그인 시점 지연 마이그레이션 방식으로 서비스 중단 없이 전환했습니다.",
+                tags: ["Lazy Migration", "MySQL", "Zero Downtime"],
                 delay: "fi-d1",
               },
               {

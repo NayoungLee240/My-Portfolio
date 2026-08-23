@@ -16,7 +16,7 @@ export class AboutService {
       notion:
         "https://nayoung-lee.notion.site/fcbd5946265d4b9082c1021dd7701ba0",
       stats: {
-        totalExp: "4.9",
+        totalExp: "5.2",
         maxCCU: "20만",
         stableCCU: "6만",
         liveGames: "4+",

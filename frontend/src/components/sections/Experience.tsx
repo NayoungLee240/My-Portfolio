@@ -19,7 +19,7 @@ export default function Experience() {
                 <div className="exp-badge">● CURRENT</div>
               </div>
               <div className="exp-co">스토리타코 (StoreyTaco)</div>
-              <div className="exp-role">SERVER LEAD · 1년 5개월+</div>
+              <div className="exp-role">SERVER LEAD · 1년 10개월+</div>
               <div className="exp-projs">
                 <div className="exp-proj">
                   <div className="exp-pname">
@@ -29,9 +29,11 @@ export default function Experience() {
                   <ul className="exp-list">
                     <li>서버 파트 리드로서 백엔드 아키텍처 전체 설계 및 구축 주도 (2025.05 2실 서버 리드 진급)</li>
                     <li>로그인 / 대기 / 게임 / 운영툴 서버 역할 분리 설계 — 확장성 및 가용성 확보</li>
-                    <li>JWT 기반 인증 구조 설계 — Access/Refresh Token 분리, 이중 검증, 중복 로그인 방지</li>
+                    <li>JWT 기반 인증 구조 설계 — 매 API 호출마다 토큰 재발급, Redis 세션 검증, 중복 로그인 방지</li>
                     <li>Redis 기반 세션 및 접속 제어로 상시 6만 / 최대 20만 동접 안정 운영</li>
-                    <li>InfluxDB 기반 지표 수집 시스템으로 5분 단위 CCU 모니터링 고도화</li>
+                    <li>InfluxDB 지표 서버를 MySQL로 통합 — 데이터 마이그레이션 및 스키마 설계 수행 (운영 복잡도 대비 실사용 지표만 선별해 단순화)</li>
+                    <li>검색 적합성 저하로 업적·에스퍼 등 핵심 테이블 키 구조 변경 필요 → 정기점검 시 코드 배포 후, 유저 로그인 시점에 지연 마이그레이션(lazy migration) 처리하여 라이브 서비스 중단 없이 완료 (전체 배치 마이그레이션 대비 순간 DB 부하 유의미하게 감소)</li>
+                    <li>Slow Query Log·EXPLAIN 분석 기반 인덱스 재설계로 주요 API 응답 속도 개선</li>
                     <li>GoogleChat 알림 봇 — 크리티컬 오류, 유효하지 않은 접근, 스케줄러 실시간 대응</li>
                     <li>Firebase(iOS/AOS), Steam, EroLabs 멀티 플랫폼 로그인 통합</li>
                     <li>Node.js EventEmitter 기반 이벤트 주도 미션·업적 시스템 구현</li>
@@ -40,7 +42,7 @@ export default function Experience() {
                   </ul>
                   <div className="exp-stack">
                     <span className="tag">Node.js</span><span className="tag">MySQL</span>
-                    <span className="tag p">Redis</span><span className="tag g">InfluxDB</span>
+                    <span className="tag p">Redis</span>
                     <span className="tag">AWS EC2</span><span className="tag">RDS</span><span className="tag">ElastiCache</span>
                   </div>
                 </div>
