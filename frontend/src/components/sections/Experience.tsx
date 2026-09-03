@@ -12,14 +12,13 @@ export default function Experience() {
 
           {/* 스토리타코 */}
           <div className="tl-item fi">
-            <div className="tl-dot cur" />
+            <div className="tl-dot" />
             <div className="exp-card">
               <div className="exp-meta">
-                <div className="exp-period">2024.10 → PRESENT</div>
-                <div className="exp-badge">● CURRENT</div>
+                <div className="exp-period">2024.10 → 2026.08</div>
               </div>
               <div className="exp-co">스토리타코 (StoreyTaco)</div>
-              <div className="exp-role">SERVER LEAD · 1년 10개월+</div>
+              <div className="exp-role">SERVER LEAD · 1년 11개월</div>
               <div className="exp-projs">
                 <div className="exp-proj">
                   <div className="exp-pname">
