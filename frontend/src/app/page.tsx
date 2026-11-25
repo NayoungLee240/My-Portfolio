@@ -1,12 +1,15 @@
 import Hero, { type AboutData } from "@/components/sections/Hero";
-import Profile from "@/components/sections/Profile";
-import Skills, { type SkillCategory } from "@/components/sections/Skills";
+import About from "@/components/sections/About";
 import Experience from "@/components/sections/Experience";
-import Showcase from "@/components/sections/Showcase";
+import Project from "@/components/sections/Project";
 import Architecture from "@/components/sections/Architecture";
-import Metrics from "@/components/sections/Metrics";
+import CoreDesign from "@/components/sections/CoreDesign";
+import Incident from "@/components/sections/Incident";
+import Monitoring from "@/components/sections/Monitoring";
+import AdminTool from "@/components/sections/AdminTool";
+import Leadership from "@/components/sections/Leadership";
+import Skills, { type SkillCategory } from "@/components/sections/Skills";
 import Blog from "@/components/sections/Blog";
-import ApiCta from "@/components/sections/ApiCta";
 import Contact from "@/components/sections/Contact";
 
 // 스크롤 페이드인 IntersectionObserver 초기화 스크립트 (클라이언트)
@@ -25,117 +28,49 @@ function FadeInScript() {
   );
 }
 
-// 백엔드 연결 불가 시 사용할 폴백 데이터
-const fallbackAbout: AboutData = {
+// 정적 데이터 (GitHub Pages 정적 배포 - 백엔드 서버 미사용)
+const about: AboutData = {
   nameEn: "NAYOUNG LEE",
-  subtitle: "// GAME BACKEND · NODE.JS · AWS · REDIS",
+  subtitle: "게임 서버 설계와 라이브 운영 · 서버 파트 리드",
   summary:
-    "Node.js 기반 글로벌 게임 라이브 서비스를 구축·운영하며 인증/접속 대기/콘텐츠 서버를 포함한 백엔드 전반을 담당합니다. 상시 6만 / 최대 20만 동접 규모의 서비스를 안정적으로 운영한 경험을 보유합니다.",
+    "Node.js로 글로벌 RPG Zerowake Gates의 서버를 처음부터 설계했고, 상시 6만 명, 최대 20만 명이 접속하는 라이브 서비스를 운영했습니다.",
   email: "iny003@naver.com",
-  blog: "https://lyeo-code.tistory.com/",
+  blog: "https://lyeo-code.tistory.com",
   notion: "https://nayoung-lee.notion.site/fcbd5946265d4b9082c1021dd7701ba0",
-  stats: { totalExp: "5.2", maxCCU: "20만", stableCCU: "6만", liveGames: "4+" },
+  game: "https://zerowakegates.com",
+  stats: [
+    { value: "20만", label: "MAX CCU" },
+    { value: "6만", label: "STABLE CCU" },
+    { value: "10+", label: "LINKED GAMES" },
+    { value: "5년 3개월", label: "SERVER EXP" },
+  ],
 };
 
-const fallbackSkills: SkillCategory[] = [
-  {
-    category: "LANGUAGES",
-    items: [
-      { name: "JavaScript", type: "primary" },
-      { name: "TypeScript", type: "primary" },
-      { name: "TypeScript", type: "primary" },
-      { name: "JAVA", type: "gray" },
-      { name: "C#", type: "gray" },
-    ],
-  },
-  {
-    category: "RUNTIME / FRAMEWORK",
-    items: [
-      { name: "Node.js", type: "primary" },
-      { name: "PM2 Cluster", type: "primary" },
-      { name: "ASP.NET", type: "gray" },
-      { name: "Spring", type: "gray" },
-      { name: "Nginx", type: "gray" },
-    ],
-  },
-  {
-    category: "DATABASE",
-    items: [
-      { name: "MySQL", type: "primary" },
-      { name: "MongoDB", type: "primary" },
-      { name: "MSSQL", type: "gray" },
-      { name: "PostgreSQL", type: "gray" },
-      { name: "Redis", type: "purple" },
-    ],
-  },
-  {
-    category: "CLOUD / INFRA",
-    items: [
-      { name: "AWS EC2", type: "primary" },
-      { name: "RDS", type: "primary" },
-      { name: "ElastiCache", type: "primary" },
-      { name: "Load Balancer", type: "primary" },
-      { name: "RDS Proxy", type: "primary" },
-      { name: "Docker", type: "primary" },
-      { name: "Linux", type: "primary" },
-    ],
-  },
-  {
-    category: "AUTHENTICATION",
-    items: [
-      { name: "JWT", type: "primary" },
-      { name: "Firebase Auth", type: "primary" },
-      { name: "Steam OAuth", type: "primary" },
-      { name: "EroLabs", type: "primary" },
-      { name: "Session Mgmt", type: "gray" },
-      { name: "차단·UID 화이트리스트", type: "gray" },
-    ],
-  },
-  {
-    category: "TOOLS & ETC",
-    items: [
-      { name: "Git", type: "primary" },
-      { name: "Elasticsearch", type: "green" },
-      { name: "Docker", type: "green" },
-      { name: "Slack Bot", type: "gray" },
-      { name: "GoogleChat Bot", type: "gray" },
-    ],
-  },
+const skills: SkillCategory[] = [
+  { category: "언어", primary: ["JavaScript", "TypeScript"], experience: ["Java", "C#"] },
+  { category: "런타임·프레임워크", primary: ["Node.js", "PM2 Cluster"], experience: ["ASP.NET", "Spring", "Nginx"] },
+  { category: "데이터베이스", primary: ["MySQL", "Redis", "MongoDB"], experience: ["MSSQL", "PostgreSQL", "Elasticsearch"] },
+  { category: "클라우드·인프라", primary: ["AWS EC2", "RDS", "ElastiCache", "RDS Proxy"], experience: ["Lambda", "Docker", "Linux"] },
+  { category: "인증", primary: ["JWT", "Firebase Auth", "Steam OAuth"], experience: ["Redis 세션 관리"] },
+  { category: "도구", primary: ["Git"], experience: ["GoogleChat 봇", "Slack 봇"] },
 ];
 
-// 백엔드 API에서 데이터를 fetch하는 헬퍼 (실패 시 폴백 반환)
-async function fetchJson<T>(url: string, fallback: T): Promise<T> {
-  try {
-    const res = await fetch(url, { next: { revalidate: 3600 } });
-    if (!res.ok) return fallback;
-    const json = await res.json();
-    // NestJS ResponseInterceptor가 { success, data } 형태로 감싸므로 .data 추출
-    return (json?.data ?? json) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-// 홈 페이지 - 백엔드에서 about/skills fetch 후 컴포넌트에 prop으로 전달
-export default async function HomePage() {
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
-
-  const [about, skills] = await Promise.all([
-    fetchJson<AboutData>(`${apiBase}/api/about`, fallbackAbout),
-    fetchJson<SkillCategory[]>(`${apiBase}/api/skills`, fallbackSkills),
-  ]);
-
+// 홈 페이지
+export default function HomePage() {
   return (
     <>
       <Hero about={about} />
-      <Profile />
-      <Skills skills={skills} />
+      <About />
       <Experience />
-      <Showcase />
+      <Project />
       <Architecture />
-      <Metrics />
+      <CoreDesign />
+      <Incident />
+      <Monitoring />
+      <AdminTool />
+      <Leadership />
+      <Skills skills={skills} />
       <Blog />
-      <ApiCta />
       <Contact />
       <FadeInScript />
     </>

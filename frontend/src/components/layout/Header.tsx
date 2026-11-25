@@ -2,15 +2,14 @@ import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
-  { label: "HOME", href: "#hero" },
-  { label: "PROFILE", href: "#profile" },
-  { label: "SKILLS", href: "#skills" },
+  { label: "ABOUT", href: "#about" },
   { label: "EXP", href: "#experience" },
-  { label: "PROJECTS", href: "#showcase" },
+  { label: "PROJECT", href: "#project" },
   { label: "ARCH", href: "#architecture" },
-  { label: "METRICS", href: "#metrics" },
-  { label: "BLOG", href: "#blog" },
-  { label: "API DOCS", href: "#api-cta" },
+  { label: "DESIGN", href: "#design" },
+  { label: "OPS", href: "#monitoring" },
+  { label: "LEAD", href: "#leadership" },
+  { label: "SKILLS", href: "#skills" },
   { label: "CONTACT", href: "#contact" },
 ];
 

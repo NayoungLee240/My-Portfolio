@@ -45,10 +45,10 @@ export default function Blog() {
   }, []);
 
   return (
-    <section id="blog">
+    <section id="blog" className="bg-alt">
       <div className="section-wrap">
         <div className="sec-header fi">
-          <div className="sec-num">// 06</div>
+          <div className="sec-num">// 11</div>
           <div className="sec-title">DEV BLOG</div>
           <div className="sec-line" />
         </div>

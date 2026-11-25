@@ -3,64 +3,14 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class SkillsService {
   getSkills() {
-    // 기술 스택을 카테고리별로 분류 (메인 기술: primary, 보조: secondary, 경험: gray)
+    // 기술 스택을 분야별로 분류 (primary: 주력, experience: 경험)
     return [
-      {
-        category: 'LANGUAGES',
-        items: [
-          { name: 'JavaScript', type: 'primary' },
-          { name: 'JAVA', type: 'gray' },
-          { name: 'C#', type: 'gray' },
-        ],
-      },
-      {
-        category: 'RUNTIME / FRAMEWORK',
-        items: [
-          { name: 'Node.js', type: 'primary' },
-          { name: 'ASP.NET', type: 'gray' },
-          { name: 'Spring', type: 'gray' },
-          { name: 'Nginx', type: 'gray' },
-        ],
-      },
-      {
-        category: 'DATABASE',
-        items: [
-          { name: 'MySQL', type: 'primary' },
-          { name: 'MongoDB', type: 'primary' },
-          { name: 'MSSQL', type: 'gray' },
-          { name: 'PostgreSQL', type: 'gray' },
-          { name: 'Redis', type: 'purple' },
-        ],
-      },
-      {
-        category: 'CLOUD / INFRA',
-        items: [
-          { name: 'AWS EC2', type: 'primary' },
-          { name: 'RDS', type: 'primary' },
-          { name: 'ElastiCache', type: 'primary' },
-          { name: 'Load Balancer', type: 'primary' },
-          { name: 'Docker', type: 'gray' },
-          { name: 'Linux', type: 'gray' },
-        ],
-      },
-      {
-        category: 'AUTHENTICATION',
-        items: [
-          { name: 'JWT', type: 'primary' },
-          { name: 'Firebase Auth', type: 'primary' },
-          { name: 'Steam OAuth', type: 'primary' },
-          { name: 'Session Mgmt', type: 'gray' },
-        ],
-      },
-      {
-        category: 'TOOLS & ETC',
-        items: [
-          { name: 'Git', type: 'primary' },
-          { name: 'Elasticsearch', type: 'green' },
-          { name: 'Slack Bot', type: 'gray' },
-          { name: 'GoogleChat Bot', type: 'gray' },
-        ],
-      },
+      { category: '언어', primary: ['JavaScript', 'TypeScript'], experience: ['Java', 'C#'] },
+      { category: '런타임·프레임워크', primary: ['Node.js', 'PM2 Cluster'], experience: ['ASP.NET', 'Spring', 'Nginx'] },
+      { category: '데이터베이스', primary: ['MySQL', 'Redis', 'MongoDB'], experience: ['MSSQL', 'PostgreSQL', 'Elasticsearch'] },
+      { category: '클라우드·인프라', primary: ['AWS EC2', 'RDS', 'ElastiCache', 'RDS Proxy'], experience: ['Lambda', 'Docker', 'Linux'] },
+      { category: '인증', primary: ['JWT', 'Firebase Auth', 'Steam OAuth'], experience: ['Redis 세션 관리'] },
+      { category: '도구', primary: ['Git'], experience: ['GoogleChat 봇', 'Slack 봇'] },
     ];
   }
 }

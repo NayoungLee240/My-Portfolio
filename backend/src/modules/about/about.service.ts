@@ -7,20 +7,20 @@ export class AboutService {
     return {
       name: "이나영",
       nameEn: "NAYOUNG LEE",
-      title: "Backend Server Developer",
-      subtitle: "// GAME BACKEND · NODE.JS · AWS · REDIS",
+      title: "Game Backend Server Developer",
+      subtitle: "게임 서버 설계와 라이브 운영 · 서버 파트 리드",
       summary:
-        "Node.js 기반 글로벌 게임 라이브 서비스를 구축·운영하며 인증/접속 대기/콘텐츠 서버를 포함한 백엔드 전반을 담당합니다. 상시 6만 / 최대 20만 동접 규모의 서비스를 안정적으로 운영한 경험을 보유합니다.",
+        "Node.js로 글로벌 RPG Zerowake Gates의 서버를 처음부터 설계했고, 상시 6만 명, 최대 20만 명이 접속하는 라이브 서비스를 운영했습니다.",
       email: "iny003@naver.com",
-      blog: "https://lyeo-code.tistory.com/",
-      notion:
-        "https://nayoung-lee.notion.site/fcbd5946265d4b9082c1021dd7701ba0",
-      stats: {
-        totalExp: "5.2",
-        maxCCU: "20만",
-        stableCCU: "6만",
-        liveGames: "4+",
-      },
+      blog: "https://lyeo-code.tistory.com",
+      notion: "https://nayoung-lee.notion.site/fcbd5946265d4b9082c1021dd7701ba0",
+      game: "https://zerowakegates.com",
+      stats: [
+        { value: "20만", label: "MAX CCU" },
+        { value: "6만", label: "STABLE CCU" },
+        { value: "10+", label: "LINKED GAMES" },
+        { value: "5년 3개월", label: "SERVER EXP" },
+      ],
     };
   }
 }

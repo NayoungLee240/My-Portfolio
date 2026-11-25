@@ -1,16 +1,8 @@
 /** @type {import('next').NextConfig} */
-const isProd = process.env.NODE_ENV === "production";
+// GitHub Pages 정적 배포 (https://nayounglee240.github.io/MyPortfolio-Build/)
+// 백엔드 서버 없이 프론트엔드만 정적 export
 const basePath = "/MyPortfolio-Build";
 const nextConfig = {
-  // /api/* 요청을 백엔드 서버로 프록시
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/:path*`,
-      },
-    ];
-  },
   basePath: basePath,
   output: "export",
   images: {
@@ -18,9 +10,6 @@ const nextConfig = {
     loader: "imgix",
     path: basePath + "/",
   },
-  assetPrefix: isProd
-    ? "https://nayounglee240.github.io" + basePath
-    : undefined,
 };
 
 export default nextConfig;

@@ -4,7 +4,7 @@ export default function Contact() {
     <section id="contact">
       <div className="section-wrap">
         <div className="sec-header fi">
-          <div className="sec-num">// 08</div>
+          <div className="sec-num">// 12</div>
           <div className="sec-title">CONTACT</div>
           <div className="sec-line" />
         </div>
@@ -31,7 +31,7 @@ export default function Contact() {
               </div>
             </a>
             <a
-              href="https://lyeo-code.tistory.com/"
+              href="https://lyeo-code.tistory.com"
               target="_blank"
               rel="noopener noreferrer"
               className="c-link"
@@ -43,7 +43,7 @@ export default function Contact() {
               </div>
             </a>
             <a
-              href="https://zerowakegates.com/ko/"
+              href="https://zerowakegates.com"
               target="_blank"
               rel="noopener noreferrer"
               className="c-link"
@@ -58,7 +58,7 @@ export default function Contact() {
 
           {/* 자격증 & 학력 */}
           <div className="fi">
-            <div className="cert-lbl">CERTIFICATIONS &amp; EDUCATION</div>
+            <div className="cert-lbl">EDUCATION · CERTIFICATIONS · AWARDS</div>
             <div className="cert-list">
               <div className="cert-item">
                 <div className="cert-badge">SQLD</div>
@@ -84,13 +84,20 @@ export default function Contact() {
                 </div>
               </div>
               <div className="cert-item">
+                <div className="cert-badge">KMU</div>
+                <div className="cert-info">
+                  <div className="cert-name">국민대학교 전자공학부</div>
+                  <div className="cert-org">학사</div>
+                </div>
+              </div>
+              <div className="cert-item">
                 <div className="cert-badge">🏆</div>
                 <div className="cert-info">
                   <div className="cert-name">
-                    최우수논문발표상 (한국발명진흥회장상)
+                    학회 최우수·우수 논문발표상 (제1저자)
                   </div>
                   <div className="cert-org">
-                    한국지식재산교육연구학회 · 2019.04
+                    2019.04 최우수논문발표상 (한국발명진흥회장상, 한국지식재산교육연구학회) · 2018 우수논문발표상
                   </div>
                 </div>
               </div>
